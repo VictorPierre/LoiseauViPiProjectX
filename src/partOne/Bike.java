@@ -15,6 +15,13 @@ public abstract class Bike {
 		this.bikeID = 10*counter+lastDigit;
 		counter ++;
 	}
+
+	public int getBikeID() {
+		return bikeID;
+	}
+
+	public void setBikeID(int bikeID) {
+		this.bikeID = bikeID;
+	}
 	
 }
-//Salut
