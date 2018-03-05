@@ -187,7 +187,11 @@ public class Station {
 		this.slotList.add(p);
 	}
 	
-	
+	public int getBikeID(int i) {
+		ParkingSlot p = this.slotList.get(i);
+		Bike b = p.getBike();
+		return b.getBikeID();
+	}
 	
 	
 }
