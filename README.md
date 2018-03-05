@@ -1,2 +1,0 @@
-# LoiseauViPiProjectX
-Java project
