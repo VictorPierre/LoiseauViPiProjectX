@@ -9,6 +9,6 @@ public class MechanicBike extends Bike{
 	
 //toString method
 	public String toString() {
-		return "Vélo méchanique n° "+this.bikeID;
+		return "Vélo méchanique n° "+this.id;
 	}	
 }

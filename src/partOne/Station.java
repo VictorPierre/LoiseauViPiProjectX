@@ -1,19 +1,24 @@
 package partOne;
 
-import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.TreeMap;
+
+import Exceptions.EmptySlotException;
+import Exceptions.FullSlotException;
+import Exceptions.OutOfOrderException;
 import stationType.*;
 
 
 public class Station {
 	
 	//Name of the station
-	private String stationName;
+	private String name;
 		
 	//Location of the station
-	private float[] stationLocation = {0,0};
+	private float[] location = {0,0};
 	
 	//Station numerical identifier
-	private int stationID;
+	private int id;
 	
 	//Number which will be used to create the ID
 	private static int counter;
@@ -25,10 +30,10 @@ public class Station {
 	private boolean isOnline;
 	
 	//List of the station parking slots
-	private ArrayList<ParkingSlot> slotList;
+	private TreeMap<Integer,ParkingSlot> slotMap;
 	
 	//Number of parking slots in the station
-	private int parkingSlotNumber;
+	private int parkingSlotNb;
 	
 	//Total number of bike rent in the station
 	private int totalRentNb;
@@ -36,72 +41,135 @@ public class Station {
 	//Total number of bike returns in the station
 	private int totalReturnNb;
 	
+	//Total number of available slots
+	private int availableSlotNb;
+	
 	//Type of station
 	private StationType stationType;
 	
 	
 	//Default constructor
 	public Station() {
-		this.stationName = "default";
-		//this.stationLocation = {0,0};
-		this.stationID = 10*counter + lastDigit;
+		this.name = "default";
+		this.location = new float[]{0,0};
+		this.id = 10*counter + lastDigit;
 		this.isOnline = true;
-		this.slotList = new ArrayList<ParkingSlot>();
-		this.parkingSlotNumber = 0;
+		this.slotMap = new TreeMap<Integer,ParkingSlot>();
+		this.parkingSlotNb = 0;
 		this.totalRentNb = 0;
 		this.totalReturnNb = 0;
+		this.availableSlotNb = 0;
 		this.stationType = new StandardType();
 	}
 	
 	//Constructor with name and station type
 	public Station(String name, StationType stationType) {
-		this.stationName = name;
-		//this.stationLocation = {0,0};
-		this.stationID = 10*counter + lastDigit;
+		this.name = name;
+		this.location = new float[]{0,0};
+		this.id = 10*counter + lastDigit;
 		this.isOnline = true;
-		this.slotList = new ArrayList<ParkingSlot>();
-		this.parkingSlotNumber = 0;
+		this.slotMap = new TreeMap<Integer,ParkingSlot>();
+		this.parkingSlotNb = 0;
 		this.totalRentNb = 0;
 		this.totalReturnNb = 0;
+		this.availableSlotNb = 0;
 		this.stationType = stationType;
 	}
 
 	
 	//Setters
 	public void setStationName(String stationName) {
-		this.stationName = stationName;
+		this.name = stationName;
 	}
 	public void setStationLocation(float[] stationLocation) {
-		this.stationLocation = stationLocation;
+		this.location = stationLocation;
 	}
 	public void setOnline(boolean isOnline) {
 		this.isOnline = isOnline;
 	}
-	public void setSlotList(ArrayList<ParkingSlot> slotList) {
-		this.slotList = slotList;
-	}
 	public void setStationType(StationType stationType) {
 		this.stationType = stationType;
 	}
+	public void setSlotMap(TreeMap<Integer,ParkingSlot> slotMap) {
+		this.slotMap= slotMap;
+	}
+	
+	//Methods that affect the state of a parking slot
+	
+	/**
+	 * Return the bike in the slot whose id is i
+	 * @param i
+	 * @param bike
+	 */
+	public void returnBike(int i, Bike bike) {
+		ParkingSlot park = this.slotMap.get(i);
+		this.slotMap.remove(i);
+		try {
+			park.returnBike(bike);
+			this.totalReturnNb++;
+			this.availableSlotNb--;
+		} catch (FullSlotException | OutOfOrderException e) {
+			e.printStackTrace();
+		}
+		this.slotMap.put(i,park);
+	}
+	/**
+	 * Take the bike away from the slot whose id is i
+	 * @param i
+	 * @return
+	 */
+	public Bike takeBike(int i) {
+		ParkingSlot park = this.slotMap.get(i);
+		this.slotMap.remove(i);
+		Bike bike=null;
+		try {
+			bike = park.takeBike();
+			this.totalRentNb++;
+			this.availableSlotNb++;
+		} catch (EmptySlotException | OutOfOrderException e) {
+			e.printStackTrace();
+		}
+		this.slotMap.put(i,park);
+		return bike;
+	}
+	
+	/**
+	 * Set if the parking slot whose id is i is out of order or not
+	 * @param i
+	 * @param isOutOfOrder
+	 */
+	public void setOutOfOrder(int i, boolean isOutOfOrder) {
+		ParkingSlot park = this.slotMap.get(i);
+		int etatAvant = (park.isOutOfOrder()?-1:1);
+		int etatApres = (isOutOfOrder?-1:1);
+		int availableChange = (etatApres-etatAvant)/2;
+		this.availableSlotNb += availableChange;
+		this.slotMap.remove(i);
+		park.setOutOfOrder(isOutOfOrder);
+		this.slotMap.put(i,park);
+		
+	}
+		
+	
 	
 	//Getters
-	public String getStationName() {
-		return stationName;
+	public String getName() {
+		return name;
 	}
-	public float[] getStationLocation() {
-		return stationLocation;
+	public float[] getLocation() {
+		return location;
 	}
-	public int getStationID() {
-		return stationID;
+	public int getID() {
+		return id;
+	}
+	public int getAvailableSlotNb() {
+		return availableSlotNb;
 	}
 	public boolean isOnline() {
 		return isOnline;
 	}
-	public ArrayList<ParkingSlot> getSlotList() {
-		return slotList;
-	}
-	public int getParkingSlotNumber() {
-		return parkingSlotNumber;
+	public int getParkingSlotNb() {
+		return parkingSlotNb;
 	}
 	public int getTotalRentNb() {
 		return totalRentNb;
@@ -112,27 +180,55 @@ public class Station {
 	public StationType getStationType() {
 		return stationType;
 	}
-
+	public TreeMap<Integer,ParkingSlot> getSlotMap() {
+		return slotMap;
+	}
+	
+	
+	//Getters of the elements of the list of parking slots
+	public int getBikeID(int i) {
+		ParkingSlot park = this.slotMap.get(i);
+		Bike bike = park.getBike();
+		return bike.getID();
+	}
+	public Bike getBike(int i) {
+		return this.slotMap.get(i).getBike();
+	}
+	public boolean isParkingSlotOutOfOrder(int i) {
+		return this.slotMap.get(i).isOutOfOrder();
+	}
+	
+	
+	//Methods to add parking slots
+	
 	/**
 	 * Add an empty parking slot
 	 */
 	public void addEmptyParkingSlot() {
-			this.slotList.add(new ParkingSlot());
-			this.parkingSlotNumber++;
+			ParkingSlot park = new ParkingSlot();
+			int id = park.getID();
+			this.slotMap.put(id,park);
+			this.parkingSlotNb++;
+			this.availableSlotNb++;
 		}
 	
-	/** 
-	 * Add a filled parking slot with a bike
+	/**
+	 * Add a parking slot filled with a bike
 	 * @param bike
 	 */
 	public void addFilledParkingSlot(Bike bike) {
-		this.slotList.add(new ParkingSlot(bike));
-		this.parkingSlotNumber++;
+		ParkingSlot park = new ParkingSlot(bike);
+		int id = park.getID();
+		this.slotMap.put(id,park);
+		this.parkingSlotNb++;
 	}
 	
+	
+	//For the initialisation of the sation
 	/**
 	 * Add n filled parking slots with the same type of bikes
-	 * @ n
+	 * @param n
+	 * @param bike
 	 */
 	public void addFleet(int n, String bikeType) {
 		switch(bikeType) {
@@ -154,44 +250,33 @@ public class Station {
 	}
 
 
-	/**
-	 * Set the bike in the slot n°i . If the slot is empty, put "null" as argument
-	 * Add 1 to the total number of rents if the bike is taken away
-	 * Add 1 to the total number of returns if the bike is put in the parking
-	 * Doesn't take into account what there was before on the slot
-	 * @param i
-	 * @param bike
-	 */
-	public void setBike(int i, Bike bike) {
-		ParkingSlot p = this.slotList.get(i);
-		this.slotList.remove(i);
-		p.setBike(bike);
-		this.slotList.add(p);
-		if (bike instanceof Bike){
-			this.totalReturnNb++;
-		}
-		else {
-			this.totalRentNb++;
-		}
-	}
 	
-	/**
-	 * Set if the parking slot n°i is out of order or not
-	 * @param i
-	 * @param isOutOfOrder
-	 */
-	public void setOutOfOrder(int i, boolean isOutOfOrder) {
-		ParkingSlot p = this.slotList.get(i);
-		this.slotList.remove(i);
-		p.setOutOfOrder(isOutOfOrder);
-		this.slotList.add(p);
+	public String toString() {
+		String str = "";
+		str +="Station n° "+this.id + " : "+this.name+"\n";
+		str +="Location : "+ Arrays.toString(this.location)+"\n"; //Methode qui permet d'écrire la contenu de la matrice de façon plus lisible
+		str +="Status : "+((this.isOnline)?"Online":"Offline")+"\n";
+		str+="Total number of parking slots : "+this.parkingSlotNb+"\n";
+		str+="\tAvailable slots : "+this.availableSlotNb+"\n\n";
+		str += this.slotMap.values().toString();
+		return str;
+		
+		
+		
 	}
+public static void main(String[] args) {
+	Station st = new Station();
+	st.addFleet(10, "Electric");
+	st.addFleet(5, "vide");
+	st.addFleet(5, "Mechanic");
+	Bike b = st.takeBike(1000151);
+	st.returnBike(1000151,b);
+	System.out.println(st);
 	
-	public int getBikeID(int i) {
-		ParkingSlot p = this.slotList.get(i);
-		Bike b = p.getBike();
-		return b.getBikeID();
-	}
+	
+
+}
+	
 	
 	
 }

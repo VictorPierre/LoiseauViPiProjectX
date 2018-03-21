@@ -9,7 +9,7 @@ public class ElectricBike extends Bike{
 	
 	//toString method
 	public String toString() {
-		return "Vélo électrique n° "+this.bikeID;
+		return "Vélo électrique n° "+this.id;
 	}
 	
 }

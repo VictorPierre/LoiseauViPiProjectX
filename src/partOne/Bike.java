@@ -3,7 +3,7 @@ package partOne;
 public abstract class Bike {
 	
 	//Bike ID
-	protected int bikeID;
+	protected int id;
 	
 	//Number which will be used to create the ID
 	protected static int counter = 100000;
@@ -12,16 +12,16 @@ public abstract class Bike {
 	private static final int lastDigit = 2;
 	
 	Bike(){
-		this.bikeID = 10*counter+lastDigit;
+		this.id = 10*counter+lastDigit;
 		counter ++;
 	}
 
-	public int getBikeID() {
-		return bikeID;
+	public int getID() {
+		return id;
 	}
 
-	public void setBikeID(int bikeID) {
-		this.bikeID = bikeID;
+	public void setID(int id) {
+		this.id = id;
 	}
 	
 }
