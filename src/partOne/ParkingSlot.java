@@ -11,10 +11,8 @@ public class ParkingSlot {
 	private int id;
 	
 	//Number which will be used to create the ID
-	private static int counter = 100000;
-	
-	//Last digit of the ID, representing the parking slot
-	private static final int lastDigit = 1;
+	private static int counter = 1;
+
 	
 	
 	//Whether the slot is usable or not
@@ -26,14 +24,14 @@ public class ParkingSlot {
 	//Constructors
 		//Default one
 	ParkingSlot(){
-		this.id = 10*counter+lastDigit;
+		this.id = counter;
 		this.isOutOfOrder = false;
 		this.bike = null;
 		counter ++;
 	}
 		//Constructor for a given bike
 	ParkingSlot(Bike bike){
-		this.id = 10*counter+lastDigit;
+		this.id = counter;
 		this.isOutOfOrder = false;
 		this.bike = bike;
 		counter ++;
@@ -45,11 +43,14 @@ public class ParkingSlot {
 	}
 
 	//Getters
-	public int getID() {
+	public int getId() {
 		return id;
 	}
 	public Bike getBike() {
 		return bike;
+	}
+	public int getBikeId() {
+		return bike.getId();
 	}
 	public boolean isOutOfOrder() {
 		return isOutOfOrder;
@@ -99,10 +100,8 @@ public class ParkingSlot {
 		try {
 			p.returnBike(new ElectricBike());
 		} catch (FullSlotException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (OutOfOrderException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}

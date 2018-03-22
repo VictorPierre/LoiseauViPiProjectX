@@ -1,6 +1,7 @@
 package partOne;
 
 import java.util.Arrays;
+import java.util.Map.Entry;
 import java.util.TreeMap;
 
 import Exceptions.EmptySlotException;
@@ -15,16 +16,13 @@ public class Station {
 	private String name;
 		
 	//Location of the station
-	private float[] location = {0,0};
+	private float[] location;
 	
 	//Station numerical identifier
 	private int id;
 	
 	//Number which will be used to create the ID
-	private static int counter;
-	
-	//Last digit of the ID, representing the station
-	private static final int lastDigit = 0;
+	private static int counter = 1;
 	
 	//Whether the station si Online or not
 	private boolean isOnline;
@@ -52,7 +50,7 @@ public class Station {
 	public Station() {
 		this.name = "default";
 		this.location = new float[]{0,0};
-		this.id = 10*counter + lastDigit;
+		this.id = counter;
 		this.isOnline = true;
 		this.slotMap = new TreeMap<Integer,ParkingSlot>();
 		this.parkingSlotNb = 0;
@@ -66,7 +64,7 @@ public class Station {
 	public Station(String name, StationType stationType) {
 		this.name = name;
 		this.location = new float[]{0,0};
-		this.id = 10*counter + lastDigit;
+		this.id = counter;
 		this.isOnline = true;
 		this.slotMap = new TreeMap<Integer,ParkingSlot>();
 		this.parkingSlotNb = 0;
@@ -78,10 +76,10 @@ public class Station {
 
 	
 	//Setters
-	public void setStationName(String stationName) {
+	public void setName(String stationName) {
 		this.name = stationName;
 	}
-	public void setStationLocation(float[] stationLocation) {
+	public void setLocation(float[] stationLocation) {
 		this.location = stationLocation;
 	}
 	public void setOnline(boolean isOnline) {
@@ -90,9 +88,7 @@ public class Station {
 	public void setStationType(StationType stationType) {
 		this.stationType = stationType;
 	}
-	public void setSlotMap(TreeMap<Integer,ParkingSlot> slotMap) {
-		this.slotMap= slotMap;
-	}
+	
 	
 	//Methods that affect the state of a parking slot
 	
@@ -159,7 +155,7 @@ public class Station {
 	public float[] getLocation() {
 		return location;
 	}
-	public int getID() {
+	public int getId() {
 		return id;
 	}
 	public int getAvailableSlotNb() {
@@ -185,11 +181,11 @@ public class Station {
 	}
 	
 	
+	/*
+	 * 
 	//Getters of the elements of the list of parking slots
-	public int getBikeID(int i) {
-		ParkingSlot park = this.slotMap.get(i);
-		Bike bike = park.getBike();
-		return bike.getID();
+	public int getBikeId(int i) {
+		return this.slotMap.get(i).getBikeId();	
 	}
 	public Bike getBike(int i) {
 		return this.slotMap.get(i).getBike();
@@ -197,16 +193,16 @@ public class Station {
 	public boolean isParkingSlotOutOfOrder(int i) {
 		return this.slotMap.get(i).isOutOfOrder();
 	}
-	
+	*/
 	
 	//Methods to add parking slots
 	
 	/**
 	 * Add an empty parking slot
 	 */
-	public void addEmptyParkingSlot() {
+	private void addEmptyParkingSlot() {
 			ParkingSlot park = new ParkingSlot();
-			int id = park.getID();
+			int id = park.getId();
 			this.slotMap.put(id,park);
 			this.parkingSlotNb++;
 			this.availableSlotNb++;
@@ -216,9 +212,9 @@ public class Station {
 	 * Add a parking slot filled with a bike
 	 * @param bike
 	 */
-	public void addFilledParkingSlot(Bike bike) {
+	private void addFilledParkingSlot(Bike bike) {
 		ParkingSlot park = new ParkingSlot(bike);
-		int id = park.getID();
+		int id = park.getId();
 		this.slotMap.put(id,park);
 		this.parkingSlotNb++;
 	}
@@ -249,7 +245,32 @@ public class Station {
 		}
 	}
 
-
+	//Renvoie l'id de la première place vide et en service. Renvoie -1 s'il n'y en a pas.
+	public int findEmptySlot() {
+		for(Entry<Integer, ParkingSlot> entry : this.slotMap.entrySet()) {
+			int id = entry.getKey();
+			ParkingSlot park = entry.getValue();
+			if (!park.isOutOfOrder() && park.getBike() == null) {
+				return id;
+			}
+		}
+		return -1;
+	}
+	
+	//Renvoie l'id de la premiere place en service qui contient le vélo voulu
+	public int findBike(String bikeType) {
+		for(Entry<Integer, ParkingSlot> entry : this.slotMap.entrySet()) {
+			int id = entry.getKey();
+			ParkingSlot park = entry.getValue();
+			if (!park.isOutOfOrder() && park.getBike() instanceof ElectricBike && bikeType == "Electric") {
+				return id;
+			}
+			else if (!park.isOutOfOrder() && park.getBike() instanceof MechanicBike && bikeType == "Mechanic") {
+				return id;
+			}
+		}
+		return -1;
+	}
 	
 	public String toString() {
 		String str = "";
@@ -264,19 +285,19 @@ public class Station {
 		
 		
 	}
-public static void main(String[] args) {
+	/*public static void main(String[] args) {
 	Station st = new Station();
 	st.addFleet(10, "Electric");
 	st.addFleet(5, "vide");
 	st.addFleet(5, "Mechanic");
-	Bike b = st.takeBike(1000151);
-	st.returnBike(1000151,b);
+	Bike b = st.takeBike(1);
+	st.returnBike(1,b);
 	System.out.println(st);
 	
 	
 
 }
-	
+	*/
 	
 	
 }

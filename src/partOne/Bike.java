@@ -6,17 +6,15 @@ public abstract class Bike {
 	protected int id;
 	
 	//Number which will be used to create the ID
-	protected static int counter = 100000;
-	
-	//Last digit of the ID, representing the bike
-	private static final int lastDigit = 2;
+	protected static int counter = 1;
+
 	
 	Bike(){
-		this.id = 10*counter+lastDigit;
+		this.id = counter;
 		counter ++;
 	}
 
-	public int getID() {
+	public int getId() {
 		return id;
 	}
 
