@@ -58,6 +58,7 @@ public class Station {
 		this.totalReturnNb = 0;
 		this.availableSlotNb = 0;
 		this.stationType = new StandardType();
+		counter++;
 	}
 	
 	//Constructor with name and station type
@@ -72,6 +73,7 @@ public class Station {
 		this.totalReturnNb = 0;
 		this.availableSlotNb = 0;
 		this.stationType = stationType;
+		counter++;
 	}
 
 	
@@ -227,20 +229,24 @@ public class Station {
 	 * @param bike
 	 */
 	public void addFleet(int n, String bikeType) {
+		int[] idList = new int[n];
 		switch(bikeType) {
 		case ("Electric"):
 			for  (int i=0; i<n; i++) {
 				addFilledParkingSlot(new ElectricBike());
+				idList[i] = id;
 			}
 			break;
 		case ("Mechanic"):
 			for  (int i=0; i<n; i++) {
 				addFilledParkingSlot(new MechanicBike());
+				idList[i] = id;
 			}
 			break;
 		default:
 			for  (int i=0; i<n; i++) {
 				addEmptyParkingSlot();
+				idList[i] = id;
 			}	
 		}
 	}

@@ -4,6 +4,8 @@ import java.util.TreeMap;
 
 import Exceptions.EmptySlotException;
 import Exceptions.FullSlotException;
+import stationType.PlusType;
+import stationType.StandardType;
 import stationType.StationType;
 
 public class Simulation {
@@ -18,15 +20,17 @@ public class Simulation {
 	}
 	
 	//Ajouter une station
-	private void addStation() {
+	private int addStation() {
 		Station st = new Station();
 		int id = st.getId();
 		this.stationMap.put(id,st);
+		return id;
 	}
-	private void addStation(String name, StationType stationType) {
+	private int addStation(String name, StationType stationType) {
 		Station st = new Station(name,stationType);
 		int id = st.getId();
 		this.stationMap.put(id,st);
+		return id;
 	}
 	//Methodes d'initialisation sur les stations:
 	private void addStationFleet(int id, int n, String bikeType) {
@@ -79,8 +83,9 @@ public class Simulation {
 		return b;
 	}
 	
-	public void addUser(User user) {
+	public int addUser(User user) {
 		this.userMap.put(user.getId(),user);
+		return user.getId();
 	}
 	
 	//Methodes pour setter/modifier un user
@@ -147,4 +152,24 @@ public class Simulation {
 		
 	}
 	
+	public static void main(String[] args) {
+		Simulation sm = new Simulation();
+		int idChatelet = sm.addStation("Chatelet", new StandardType());
+		int idLuxembourg = sm.addStation("Luxembourg", new PlusType());
+		sm.addStationFleet(idChatelet, 10, "Electric");
+		sm.addStationFleet(idChatelet, 10, "Mechanic");
+		sm.addStationFleet(idChatelet, 10, "Vide");
+		sm.addStationFleet(idLuxembourg, 10, "Electric");
+		sm.addStationFleet(idLuxembourg, 10, "Mechanic");
+		sm.addStationFleet(idLuxembourg, 10, "Vide");
+		
+		System.out.println(sm.stationMap.get(idLuxembourg).toString());
+		
+		int idPaul = sm.addUser(new User("Paul"));
+		sm.setUserCard(idPaul, new VlibreCard());
+		sm.takeBike(idPaul,idChatelet,1,0);
+		System.out.println(sm.userMap.get(idPaul).getCurrentBike());
+		sm.returnBike(idPaul,idLuxembourg,60,100);
+		
+	}
 }

@@ -3,7 +3,7 @@ package partOne;
 import Exceptions.EmptySlotException;
 import Exceptions.FullSlotException;
 
-public abstract class User {
+public class User {
 
 	//Name of the user
 	private String name;
@@ -32,6 +32,16 @@ public abstract class User {
 	
 	public User() {
 		this.name = "Default";
+		this.location = new float[] {0,0};
+		this.id = counter;
+		counter++;
+		this.currentBike = null;
+		this.card = null;
+		updateCost();
+	}
+	
+	public User(String name) {
+		this.name = name;
 		this.location = new float[] {0,0};
 		this.id = counter;
 		counter++;
