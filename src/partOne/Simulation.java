@@ -1,9 +1,11 @@
 package partOne;
 
+import java.util.Arrays;
 import java.util.TreeMap;
 
 import Exceptions.EmptySlotException;
 import Exceptions.FullSlotException;
+import Exceptions.OfflineException;
 import stationType.PlusType;
 import stationType.StandardType;
 import stationType.StationType;
@@ -26,6 +28,8 @@ public class Simulation {
 		this.stationMap.put(id,st);
 		return id;
 	}
+	
+	
 	private int addStation(String name, StationType stationType) {
 		Station st = new Station(name,stationType);
 		int id = st.getId();
@@ -47,7 +51,7 @@ public class Simulation {
 		st.setName(stationName);
 		this.stationMap.put(stationId, st);
 	}
-	public void setStationLocation(int stationId, float[] stationLocation) {
+	public void setStationLocation(int stationId, Coordinate stationLocation) {
 		Station st = this.stationMap.get(stationId);
 		this.stationMap.remove(stationId);
 		st.setLocation(stationLocation);
@@ -57,6 +61,38 @@ public class Simulation {
 		Station st = this.stationMap.get(stationId);
 		this.stationMap.remove(stationId);
 		st.setOnline(isOnline);
+		this.stationMap.put(stationId, st);
+		if (!isOnline) {
+			this.alertIncomingBikeGiver(stationId, "La station "+this.stationMap.get(stationId).getName()+" est désormais hors-service. Vous devez recalculer votre itinéraire.");
+			this.alertIncomingBikeTaker(stationId, "La station "+this.stationMap.get(stationId).getName()+" est désormais hors-service. Vous devez recalculer votre itinéraire.");
+		}
+	}
+	
+	public void setStationSlotOutOfOrder(int stationId, int slotId, boolean isOutOfOrder) {
+		Station st = this.stationMap.get(stationId);
+		this.stationMap.remove(stationId);
+		st.setOutOfOrder(slotId, isOutOfOrder);
+		this.stationMap.put(stationId, st);
+		if (this.stationMap.get(stationId).findBike("Electric")==-1 && this.stationMap.get(stationId).findBike("Mechanic")==-1) {
+			this.alertIncomingBikeGiver(stationId,"Il n'y a plus de vélos disponibles dans la station "+this.stationMap.get(stationId).getName()+". Vous devez recalculer votre itinéraire.");
+		}
+		if (this.stationMap.get(stationId).findEmptySlot()==-1) {
+			this.alertIncomingBikeGiver(stationId,"Il n'y a plus de place dans la destination souhaitée "+this.stationMap.get(stationId).getName()+". Vous devez recalculer votre itinéraire.");
+		}
+		
+	}
+	
+	public void addIncomingBikeTaker(int stationId,int userId) {
+		Station st = this.stationMap.get(stationId);
+		this.stationMap.remove(stationId);
+		st.addIncomingBikeTaker(userId);
+		this.stationMap.put(stationId, st);
+	}
+	
+	public void addIncomingBikeGiver(int stationId,int userId) {
+		Station st = this.stationMap.get(stationId);
+		this.stationMap.remove(stationId);
+		st.addIncomingBikeGiver(userId);
 		this.stationMap.put(stationId, st);
 	}
 	
@@ -72,13 +108,22 @@ public class Simulation {
 	private void returnBikeStation(int stationId, int slotId, Bike bike) {
 		Station st = this.stationMap.get(stationId);
 		this.stationMap.remove(stationId);
-		st.returnBike(slotId, bike);
+		try {
+			st.returnBike(slotId, bike);
+		} catch (OfflineException e) {
+			e.printStackTrace();
+		}
 		this.stationMap.put(stationId, st);
 	}
 	private Bike takeBikeStation(int stationId, int slotId) {
 		Station st = this.stationMap.get(stationId);
 		this.stationMap.remove(stationId);
-		Bike b = st.takeBike(slotId);
+		Bike b=null;
+		try {
+			b = st.takeBike(slotId);
+		} catch (OfflineException e) {
+			e.printStackTrace();
+		}
 		this.stationMap.put(stationId, st);
 		return b;
 	}
@@ -97,7 +142,7 @@ public class Simulation {
 		this.userMap.put(userId,us);
 	}
 	
-	public void setUserLocation(int userId, float[] location) {
+	public void setUserLocation(int userId, Coordinate location) {
 		User us = this.userMap.get(userId);
 		this.userMap.remove(userId);
 		us.setLocation(location);
@@ -138,6 +183,9 @@ public class Simulation {
 	public void takeBike(int userId, int stationId, int slotId, int time) {
 		Bike b = takeBikeStation(stationId, slotId);
 		takeBikeUser(userId,b,time);
+		if (this.stationMap.get(stationId).findBike("Electric")==-1 && this.stationMap.get(stationId).findBike("Mechanic")==-1) {
+			this.alertIncomingBikeGiver(stationId,"Il n'y a plus de vélos disponibles dans la station "+this.stationMap.get(stationId).getName()+". Vous devez recalculer votre itinéraire.");
+		}
 	}
 	
 	public void returnBike(int userId, int stationId, int slotId, int time) {
@@ -150,7 +198,39 @@ public class Simulation {
 		int rideCost = cost.getRideCost(rideDuration);
 		System.out.println("L'utilisateur sera débité de "+rideCost+"€");
 		
+		if (this.stationMap.get(stationId).findEmptySlot()==-1) {
+			this.alertIncomingBikeGiver(stationId,"Il n'y a plus de place dans la destination souhaitée "+this.stationMap.get(stationId).getName()+". Vous devez recalculer votre itinéraire.");
+		}
+		
+		
 	}
+	
+	private void alertIncomingBikeGiver(int stationId, String message) {
+		String str = "Message envoyé aux utilisateurs suivants : ";
+		str += this.stationMap.get(stationId).getIncomingBikeGiver().toString();
+		str += "\n"+message;
+		System.out.println(str);
+	}
+	
+	private void alertIncomingBikeTaker(int stationId, String message) {
+		String str = "Message envoyé aux utilisateurs suivants : ";
+		str += this.stationMap.get(stationId).getIncomingBikeTaker().toString();
+		str += "\n"+message;
+		System.out.println(str);
+	}
+
+	//Métode qui permet de démarrer un ride pour un user
+	public void startRide(int userId, Ride ride) {
+		User user = this.userMap.get(userId);
+		user.setCurrentRide(ride);
+		//On indique ensuite aux stations que l'utilisateur est en train d'arriver
+		int startingStationId = ride.getStartingStationId();
+		int destinationStationId = ride.getDestinationStationId();
+		this.addIncomingBikeTaker(startingStationId, userId);
+		this.addIncomingBikeGiver(destinationStationId, userId);
+	}
+	
+	
 	
 	public static void main(String[] args) {
 		Simulation sm = new Simulation();

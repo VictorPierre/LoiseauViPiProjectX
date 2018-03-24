@@ -1,11 +1,13 @@
 package partOne;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Map.Entry;
 import java.util.TreeMap;
 
 import Exceptions.EmptySlotException;
 import Exceptions.FullSlotException;
+import Exceptions.OfflineException;
 import Exceptions.OutOfOrderException;
 import stationType.*;
 
@@ -16,7 +18,7 @@ public class Station {
 	private String name;
 		
 	//Location of the station
-	private float[] location;
+	private Coordinate location;
 	
 	//Station numerical identifier
 	private int id;
@@ -45,11 +47,15 @@ public class Station {
 	//Type of station
 	private StationType stationType;
 	
+	//Les id des users qui sont en route pour déposer ou prendre un vélo
+	private ArrayList<Integer> incomingBikeTaker;
+	private ArrayList<Integer> incomingBikeGiver;
+	
 	
 	//Default constructor
 	public Station() {
 		this.name = "default";
-		this.location = new float[]{0,0};
+		this.location = new Coordinate(0,0);
 		this.id = counter;
 		this.isOnline = true;
 		this.slotMap = new TreeMap<Integer,ParkingSlot>();
@@ -58,13 +64,15 @@ public class Station {
 		this.totalReturnNb = 0;
 		this.availableSlotNb = 0;
 		this.stationType = new StandardType();
+		this.incomingBikeGiver = new ArrayList<Integer>();
+		this.incomingBikeTaker = new ArrayList<Integer>();
 		counter++;
 	}
 	
 	//Constructor with name and station type
 	public Station(String name, StationType stationType) {
 		this.name = name;
-		this.location = new float[]{0,0};
+		this.location = new Coordinate(0,0);
 		this.id = counter;
 		this.isOnline = true;
 		this.slotMap = new TreeMap<Integer,ParkingSlot>();
@@ -73,6 +81,24 @@ public class Station {
 		this.totalReturnNb = 0;
 		this.availableSlotNb = 0;
 		this.stationType = stationType;
+		this.incomingBikeGiver = new ArrayList<Integer>();
+		this.incomingBikeTaker = new ArrayList<Integer>();
+		counter++;
+	}
+	
+	public Station(String name, StationType stationType, Coordinate coord) {
+		this.name = name;
+		this.location = coord;
+		this.id = counter;
+		this.isOnline = true;
+		this.slotMap = new TreeMap<Integer,ParkingSlot>();
+		this.parkingSlotNb = 0;
+		this.totalRentNb = 0;
+		this.totalReturnNb = 0;
+		this.availableSlotNb = 0;
+		this.stationType = stationType;
+		this.incomingBikeGiver = new ArrayList<Integer>();
+		this.incomingBikeTaker = new ArrayList<Integer>();
 		counter++;
 	}
 
@@ -81,8 +107,8 @@ public class Station {
 	public void setName(String stationName) {
 		this.name = stationName;
 	}
-	public void setLocation(float[] stationLocation) {
-		this.location = stationLocation;
+	public void setLocation(Coordinate coord) {
+		this.location = coord;
 	}
 	public void setOnline(boolean isOnline) {
 		this.isOnline = isOnline;
@@ -99,36 +125,46 @@ public class Station {
 	 * @param i
 	 * @param bike
 	 */
-	public void returnBike(int i, Bike bike) {
-		ParkingSlot park = this.slotMap.get(i);
-		this.slotMap.remove(i);
-		try {
-			park.returnBike(bike);
-			this.totalReturnNb++;
-			this.availableSlotNb--;
-		} catch (FullSlotException | OutOfOrderException e) {
-			e.printStackTrace();
+	public void returnBike(int i, Bike bike) throws OfflineException{
+		if (!this.isOnline){
+			throw new OfflineException();
 		}
-		this.slotMap.put(i,park);
+		else {
+			ParkingSlot park = this.slotMap.get(i);
+			this.slotMap.remove(i);
+			try {
+				park.returnBike(bike);
+				this.totalReturnNb++;
+				this.availableSlotNb--;
+			} catch (FullSlotException | OutOfOrderException e) {
+				e.printStackTrace();
+			}
+			this.slotMap.put(i,park);
+		}
 	}
 	/**
 	 * Take the bike away from the slot whose id is i
 	 * @param i
 	 * @return
 	 */
-	public Bike takeBike(int i) {
-		ParkingSlot park = this.slotMap.get(i);
-		this.slotMap.remove(i);
-		Bike bike=null;
-		try {
-			bike = park.takeBike();
-			this.totalRentNb++;
-			this.availableSlotNb++;
-		} catch (EmptySlotException | OutOfOrderException e) {
-			e.printStackTrace();
+	public Bike takeBike(int i) throws OfflineException{
+		if (!this.isOnline){
+			throw new OfflineException();
 		}
-		this.slotMap.put(i,park);
-		return bike;
+		else {
+			ParkingSlot park = this.slotMap.get(i);
+			this.slotMap.remove(i);
+			Bike bike=null;
+			try {
+				bike = park.takeBike();
+				this.totalRentNb++;
+				this.availableSlotNb++;
+			} catch (EmptySlotException | OutOfOrderException e) {
+				e.printStackTrace();
+			}
+			this.slotMap.put(i,park);
+			return bike;
+		}
 	}
 	
 	/**
@@ -148,13 +184,19 @@ public class Station {
 		
 	}
 		
+	public void addIncomingBikeTaker(int userId) {
+		this.incomingBikeTaker.add(userId);
+	}
 	
+	public void addIncomingBikeGiver(int userId) {
+		this.incomingBikeGiver.add(userId);
+	}
 	
 	//Getters
 	public String getName() {
 		return name;
 	}
-	public float[] getLocation() {
+	public Coordinate getLocation() {
 		return location;
 	}
 	public int getId() {
@@ -180,6 +222,12 @@ public class Station {
 	}
 	public TreeMap<Integer,ParkingSlot> getSlotMap() {
 		return slotMap;
+	}
+	public ArrayList<Integer> getIncomingBikeTaker() {
+		return incomingBikeTaker;
+	}
+	public ArrayList<Integer> getIncomingBikeGiver() {
+		return incomingBikeGiver;
 	}
 	
 	
@@ -281,7 +329,7 @@ public class Station {
 	public String toString() {
 		String str = "";
 		str +="Station n° "+this.id + " : "+this.name+"\n";
-		str +="Location : "+ Arrays.toString(this.location)+"\n"; //Methode qui permet d'écrire la contenu de la matrice de façon plus lisible
+		str +="Location : "+ this.location.toString()+"\n"; //Methode qui permet d'écrire la contenu de la matrice de façon plus lisible
 		str +="Status : "+((this.isOnline)?"Online":"Offline")+"\n";
 		str+="Total number of parking slots : "+this.parkingSlotNb+"\n";
 		str+="\tAvailable slots : "+this.availableSlotNb+"\n\n";
@@ -291,7 +339,8 @@ public class Station {
 		
 		
 	}
-	/*public static void main(String[] args) {
+	/*
+	public static void main(String[] args) {
 	Station st = new Station();
 	st.addFleet(10, "Electric");
 	st.addFleet(5, "vide");
@@ -299,11 +348,9 @@ public class Station {
 	Bike b = st.takeBike(1);
 	st.returnBike(1,b);
 	System.out.println(st);
-	
+	*/
+
 	
 
 }
-	*/
 	
-	
-}

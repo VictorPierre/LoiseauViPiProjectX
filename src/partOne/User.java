@@ -9,7 +9,7 @@ public class User {
 	private String name;
 		
 	//Location of the user
-	private float[] location;
+	private Coordinate location;
 	
 	//User numerical identifier
 	private int id;
@@ -23,6 +23,9 @@ public class User {
 	//Cost of the ongoing ride
 	private Cost currentCost;
 	
+	
+	private Ride currentRide;
+	
 	//Card of the user
 	private Card card;
 	
@@ -32,7 +35,7 @@ public class User {
 	
 	public User() {
 		this.name = "Default";
-		this.location = new float[] {0,0};
+		this.location = new Coordinate(0,0);
 		this.id = counter;
 		counter++;
 		this.currentBike = null;
@@ -42,7 +45,7 @@ public class User {
 	
 	public User(String name) {
 		this.name = name;
-		this.location = new float[] {0,0};
+		this.location = new Coordinate(0,0);
 		this.id = counter;
 		counter++;
 		this.currentBike = null;
@@ -55,12 +58,15 @@ public class User {
 	public void setName(String name) {
 		this.name = name;
 	}
-	public void setLocation(float[] location) {
+	public void setLocation(Coordinate location) {
 		this.location = location;
 	}	
 	public void setCard(Card card) {
 		this.card = card;
 		this.updateCost();
+	}
+	public void setCurrentRide(Ride currentRide) {
+		this.currentRide = currentRide;
 	}
 	
 	
@@ -68,7 +74,7 @@ public class User {
 	public String getName() {
 		return name;
 	}
-	public float[] getLocation() {
+	public Coordinate getLocation() {
 		return location;
 	}
 	public int getId() {
@@ -86,6 +92,10 @@ public class User {
 	public int getTime() {
 		return time;
 	}
+	public Ride getCurrentRide() {
+		return currentRide;
+	}
+	
 	
 	//Update le cout du ride en cours, change quand le vélo change ou le type de carte change
 	public void updateCost() {
@@ -113,6 +123,10 @@ public class User {
 			return b;
 		}
 	}
+
+	
+
+	
 
 
 }
