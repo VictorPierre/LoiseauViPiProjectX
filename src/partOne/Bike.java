@@ -7,7 +7,6 @@ public abstract class Bike {
 	
 	//Number which will be used to create the ID
 	protected static int counter = 1;
-
 	
 	Bike(){
 		this.id = counter;
@@ -21,5 +20,11 @@ public abstract class Bike {
 	public void setID(int id) {
 		this.id = id;
 	}
+	
+	//Get speed
+	public double getSpeed() {
+		return 15;
+	};
+	
 	
 }

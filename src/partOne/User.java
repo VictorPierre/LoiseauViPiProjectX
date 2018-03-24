@@ -96,6 +96,9 @@ public class User {
 		return currentRide;
 	}
 	
+	public void setCost(Cost cost) {
+		this.currentCost=cost;
+	}
 	
 	//Update le cout du ride en cours, change quand le vélo change ou le type de carte change
 	public void updateCost() {

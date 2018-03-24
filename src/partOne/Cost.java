@@ -51,6 +51,10 @@ public class Cost {
 		return this.timeCredit;
 	}
 	
+	public void addTimeCredit(int n) {
+		this.timeCredit=this.timeCredit+ n;
+	}
+	
 	public int getRideCost(int rideDuration) {
 		int chargedTime = rideDuration - timeCredit;
 		int rideCost = 0;

@@ -191,8 +191,17 @@ public class Simulation {
 	public void returnBike(int userId, int stationId, int slotId, int time) {
 		Bike b = returnBikeUser(userId);
 		returnBikeStation(stationId, slotId,b);
-		
 		User us = userMap.get(userId);
+		
+		//Crédit bonus pour les PlusType
+		if (this.stationMap.get(stationId).getStationType() instanceof PlusType && us.getCard()!=null) {
+			this.userMap.remove(userId);
+			Cost costuser=us.getCurrentCost();
+			costuser.addTimeCredit(5);
+			us.setCost(costuser);
+			this.userMap.put(userId,us);
+		}
+
 		int rideDuration = time - us.getTime();
 		Cost cost = us.getCurrentCost();
 		int rideCost = cost.getRideCost(rideDuration);
@@ -250,6 +259,6 @@ public class Simulation {
 		sm.takeBike(idPaul,idChatelet,1,0);
 		System.out.println(sm.userMap.get(idPaul).getCurrentBike());
 		sm.returnBike(idPaul,idLuxembourg,60,100);
-		
+		System.out.println(sm.userMap.get(idPaul).getCurrentCost().getTimeCredit());
 	}
 }
