@@ -16,6 +16,10 @@ public class Ride {
 	
 	private String rideType;
 	
+	private double distance;
+	
+	private double time;
+	
 	Ride(String rideType){
 		this.destinationStationId = counter;
 		counter++;
@@ -24,9 +28,11 @@ public class Ride {
 		this.startingLocation = new Coordinate(0,0);
 		this.wantedLocation = new Coordinate(0,0);
 		this.rideType = rideType;
+		this.distance=0;
+		this.time=0;
 	}
 	
-	Ride(Station startingStation, Station wantedStation, Coordinate startingLocation, Coordinate wantedLocation, String rideType){
+	Ride(Station startingStation, Station wantedStation, Coordinate startingLocation, Coordinate wantedLocation, String rideType, double distance, double time){
 		this.destinationStationId = counter;
 		counter++;
 		this.startingStationId=startingStation.getId();
@@ -34,6 +40,8 @@ public class Ride {
 		this.startingLocation = startingLocation;
 		this.wantedLocation = wantedLocation;
 		this.rideType = rideType;
+		this.distance=distance;
+		this.time=time;
 	}
 
 	public int getStartingStationId() {

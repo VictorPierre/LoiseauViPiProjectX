@@ -1,7 +1,7 @@
 package partOne;
 
 public class ElectricBike extends Bike{
-	
+		
 	//Constructor
 	ElectricBike(){
 		super();
@@ -11,5 +11,9 @@ public class ElectricBike extends Bike{
 	public String toString() {
 		return "Vélo électrique n° "+this.id;
 	}
+	
+	@Override public double getSpeed() {
+	        return 20;
+	    }
 	
 }
