@@ -1,5 +1,13 @@
 package partOne;
 
+/**
+ * La classe Ride permet de créer des voyages, incluant les coordonnées de départ et d'arrivée,
+ * les stations de départ et d'arrivée ainsi que d'autres informations (distance, temps...)
+ *
+ */
+
+
+
 public class Ride {
 	
 	private int id;
