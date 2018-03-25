@@ -49,7 +49,7 @@ public class RideFactory {
 			this.bikeType=bikeType;
 			this.startingLocation=startingLocation;
 			this.destinationLocation=destinationLocation;
-			this.rideType="Shortest";
+			this.rideType="shortest";
 	
 			this.startingStation = new Station("départ fictif", new StandardType(), new Coordinate(-9999,-9999));
 			this.destinationStation = new Station("arrivée fictive", new StandardType(), new Coordinate(9999,9999));
