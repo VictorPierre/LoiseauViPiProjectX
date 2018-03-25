@@ -83,8 +83,7 @@ public class ParkingSlot {
 		else {
 			Bike bikeTaken = this.bike;
 			this.bike = null;
-			return bikeTaken;
-			
+			return bikeTaken;	
 		}
 	}
 	

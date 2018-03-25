@@ -12,6 +12,10 @@ public class ElectricBike extends Bike{
 		return "Vélo électrique n° "+this.id;
 	}
 	
+	public String getType() {
+		return "Electric";
+	}
+	
 	@Override public double getSpeed() {
 	        return 20;
 	    }

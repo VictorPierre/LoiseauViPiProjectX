@@ -8,6 +8,10 @@ public abstract class Bike {
 	//Number which will be used to create the ID
 	protected static int counter = 1;
 	
+	//Type
+	public abstract String getType();
+	
+	
 	Bike(){
 		this.id = counter;
 		counter ++;

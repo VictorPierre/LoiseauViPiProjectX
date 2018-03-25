@@ -20,6 +20,8 @@ public class Ride {
 	
 	private double time;
 	
+	private String bikeType;
+	
 	Ride(String rideType){
 		this.destinationStationId = counter;
 		counter++;
@@ -30,9 +32,10 @@ public class Ride {
 		this.rideType = rideType;
 		this.distance=0;
 		this.time=0;
+		this.bikeType="";
 	}
 	
-	Ride(Station startingStation, Station wantedStation, Coordinate startingLocation, Coordinate wantedLocation, String rideType, double distance, double time){
+	Ride(Station startingStation, Station wantedStation, Coordinate startingLocation, Coordinate wantedLocation, String rideType, String bikeType, double distance, double time){
 		this.destinationStationId = counter;
 		counter++;
 		this.startingStationId=startingStation.getId();
@@ -42,6 +45,7 @@ public class Ride {
 		this.rideType = rideType;
 		this.distance=distance;
 		this.time=time;
+		this.bikeType=bikeType;
 	}
 
 	public int getStartingStationId() {
@@ -51,13 +55,28 @@ public class Ride {
 	public int getDestinationStationId() {
 		return destinationStationId;
 	}
-
+	
+	public String getBikeType() {
+		return this.bikeType;
+	}
+	
 	public void setStartingStationId(int startingStationId) {
 		this.startingStationId = startingStationId;
 	}
 
 	public void setDestinationStationId(int destinationStationId) {
 		this.destinationStationId = destinationStationId;
+	}
+	
+	public String toString() {
+		String str = "";
+		str += "Trajet n° "+this.id+" :\n";
+		str += "ID station de départ : " + this.startingStationId+ "\n";
+		str += "ID station d'arrivée : " + this.destinationStationId+ "\n";
+		str += "Ridetype " + this.rideType +"\n";
+		str += "Distance totale " + this.distance +"\n";
+		str += "Temps estimé " + this.time +"\n";
+		return str;
 	}
 	
 }

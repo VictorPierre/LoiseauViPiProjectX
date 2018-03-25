@@ -166,6 +166,22 @@ public class Station {
 			return bike;
 		}
 	}
+
+	/**
+	 * Show the bike away from the slot whose id is i
+	 * @param i
+	 * @return
+	 */
+	public Bike showBike(int i) throws OfflineException{
+		if (!this.isOnline){
+			throw new OfflineException();
+		}
+		else {
+			ParkingSlot park = this.slotMap.get(i);
+			Bike bike=park.getBike();
+			return bike;
+		}
+	}
 	
 	/**
 	 * Set if the parking slot whose id is i is out of order or not
