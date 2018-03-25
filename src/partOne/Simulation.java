@@ -250,6 +250,8 @@ public class Simulation {
 	
 	
 	public static void main(String[] args) {
+		
+		//Setting up myVelib
 		Simulation sm = new Simulation();
 		int idChatelet = sm.addStation("Chatelet", new StandardType(), new Coordinate(10,0));
 		int idLuxembourg = sm.addStation("Luxembourg", new PlusType(), new Coordinate(90,90));
@@ -263,6 +265,7 @@ public class Simulation {
 		
 		System.out.println(sm.stationMap.get(idLuxembourg).toString());
 		
+		//Rental of a bike
 		int idPaul = sm.addUser(new User("Paul"));
 		int idLucas = sm.addUser(new User ("Lucas"));
 		sm.setUserCard(idPaul, new VlibreCard());
@@ -271,15 +274,20 @@ public class Simulation {
 		sm.returnBike(idPaul,idLuxembourg,100);
 		System.out.println(sm.userMap.get(idPaul).getCurrentCost().getTimeCredit());
 		
-	
-		RideFactory rideFactory = new RideFactory();
+		String bikeType="Mechanic";
 		Coordinate startingLocation = new Coordinate(0,0);
 		Coordinate destinationLocation = new Coordinate(100,100);
-		String bikeType="Mechanic";
+		RideFactory rideFactory = new RideFactory(sm.stationMap, bikeType, startingLocation, destinationLocation);
+
+		
+		Ride ride = rideFactory.createRide();
 		Ride ride1 = rideFactory.createFastestRide(sm.stationMap, bikeType, startingLocation, destinationLocation);
 		Ride ride2 = rideFactory.createShortestRide(sm.stationMap, bikeType, startingLocation, destinationLocation);
+		System.out.println(ride);
 		System.out.println(ride1);
 		
+		
+		//Simulation of planning a ride
 		sm.startRide(idLucas, ride2);
 		sm.takeBike(idLucas, ride2.getStartingStationId(), ride2.getBikeType() , 0);
 		sm.setStationOnline(ride2.getDestinationStationId(), false);
