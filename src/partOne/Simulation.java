@@ -399,22 +399,15 @@ public class Simulation {
 		sm.returnBike(idPaul,idLuxembourg,100);
 		System.out.println(sm.userMap.get(idPaul).getCurrentCost().getTimeCredit());
 		
-		String bikeType="Mechanic";
 		Coordinate startingLocation = new Coordinate(0,0);
 		Coordinate destinationLocation = new Coordinate(100,100);
-		RideFactory rideFactory = new RideFactory(sm.stationMap, bikeType, startingLocation, destinationLocation);
-
-		
+		RideFactory rideFactory = new RideFactory(sm.stationMap, "Mechanic", startingLocation, destinationLocation);
 		Ride ride = rideFactory.createRide();
-		Ride ride1 = rideFactory.createFastestRide(sm.stationMap, bikeType, startingLocation, destinationLocation);
-		Ride ride2 = rideFactory.createShortestRide(sm.stationMap, bikeType, startingLocation, destinationLocation);
 		System.out.println(ride);
-		System.out.println(ride1);
-		
 		
 		//Simulation of planning a ride
-		sm.startRide(idLucas, ride2);
-		sm.takeBike(idLucas, ride2.getStartingStationId(), ride2.getBikeType() , 0);
-		sm.setStationOnline(ride2.getDestinationStationId(), false);
+		sm.startRide(idLucas, ride);
+		sm.takeBike(idLucas, ride.getStartingStationId(), ride.getBikeType() , 0);
+		sm.setStationOnline(ride.getDestinationStationId(), false);
 	}
 }
