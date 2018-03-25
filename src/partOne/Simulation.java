@@ -12,8 +12,14 @@ import stationType.StationType;
 
 public class Simulation {
 	
+	/**
+	 * La carte des Stations
+	 */
 	private TreeMap<Integer,Station> stationMap;
 	
+	/**
+	 * La liste des utilisateurs
+	 */
 	private TreeMap<Integer, User> userMap;
 	
 	Simulation(){
@@ -21,48 +27,86 @@ public class Simulation {
 		this.userMap = new TreeMap<Integer,User>();
 	}
 	
-	//Ajouter une station
-	private int addStation() {
+	/**
+	 * Pour ajouter une station au réseau
+	 * @return : l'ID unique de la station ainsi créée
+	 */
+	public int addStation() {
 		Station st = new Station();
 		int id = st.getId();
 		this.stationMap.put(id,st);
 		return id;
 	}
 	
-	private int addStation(String name, StationType stationType) {
+	/**
+	 * POur ajouter une station
+	 * @param name : nom de la station
+	 * @param stationType : type de la station (PlusType ou StandardType)
+	 * @return l'ID unique de la station créée
+	 */
+	public int addStation(String name, StationType stationType) {
 		Station st = new Station(name,stationType);
 		int id = st.getId();
 		this.stationMap.put(id,st);
 		return id;
 	}
-	
+	/**
+	 * POur ajouter une station
+	 * @param name : nom de la station
+	 * @param stationType : type de la station (PlusType ou StandardType)
+	 * @param location : l'emplacement de la station
+	 * @return l'ID unique de la station créée
+	 */
 	private int addStation(String name, StationType stationType, Coordinate location) {
 		Station st = new Station(name,stationType,location);
 		int id = st.getId();
 		this.stationMap.put(id,st);
 		return id;
 	}
-	//Methodes d'initialisation sur les stations:
-	private void addStationFleet(int id, int n, String bikeType) {
+
+
+	/**
+	 * Pour ajouter des vélos à une station
+	 * @param id de la station
+	 * @param n : nombre de vélos à ajouter
+	 * @param bikeType: type de vélos
+	 */
+	public void addStationFleet(int id, int n, String bikeType) {
 		Station st = this.stationMap.get(id);
 		this.stationMap.remove(id);
 		st.addFleet(n, bikeType);
 		this.stationMap.put(id, st);
 	}
 	
-	//Methodes pour setter les élements d'une station avec un id précis
+	/**
+	 * Change le nom de la station
+	 * @param stationId
+	 * @param stationName
+	 */
 	public void setStationName(int stationId, String stationName) {
 		Station st = this.stationMap.get(stationId);
 		this.stationMap.remove(stationId);
 		st.setName(stationName);
 		this.stationMap.put(stationId, st);
 	}
+	
+	/**
+	 * Change l'emplacement de la station
+	 * @param stationId
+	 * @param stationLocation
+	 */
 	public void setStationLocation(int stationId, Coordinate stationLocation) {
 		Station st = this.stationMap.get(stationId);
 		this.stationMap.remove(stationId);
 		st.setLocation(stationLocation);
 		this.stationMap.put(stationId, st);
 	}
+	
+	/**
+	 * Change le statut de la station
+	 * @param stationId
+	 * @param isOnline (boolean)
+	 */
 	public void setStationOnline(int stationId, boolean isOnline) {
 		Station st = this.stationMap.get(stationId);
 		this.stationMap.remove(stationId);
@@ -73,7 +117,12 @@ public class Simulation {
 			this.alertIncomingBikeTaker(stationId, "La station "+this.stationMap.get(stationId).getName()+" est désormais hors-service. Vous devez recalculer votre itinéraire.");
 		}
 	}
-	
+	/**
+	 * Permet de mettre un slot d'une station H-S ou non
+	 * @param stationId
+	 * @param slotId
+	 * @param isOutOfOrder
+	 */
 	public void setStationSlotOutOfOrder(int stationId, int slotId, boolean isOutOfOrder) {
 		Station st = this.stationMap.get(stationId);
 		this.stationMap.remove(stationId);
@@ -88,6 +137,11 @@ public class Simulation {
 		
 	}
 	
+	/**
+	 * Ajoute un utilisateur sur la liste des futurs preneurs de vélos (à avertir en cas de problème)
+	 * @param stationId
+	 * @param userId
+	 */
 	public void addIncomingBikeTaker(int stationId,int userId) {
 		Station st = this.stationMap.get(stationId);
 		this.stationMap.remove(stationId);
@@ -95,6 +149,11 @@ public class Simulation {
 		this.stationMap.put(stationId, st);
 	}
 	
+	/**
+	 * Ajoute un utilisateur sur la liste des futurs donneurs de vélos (à avertir en cas de problème)
+	 * @param stationId
+	 * @param userId
+	 */
 	public void addIncomingBikeGiver(int stationId,int userId) {
 		Station st = this.stationMap.get(stationId);
 		this.stationMap.remove(stationId);
@@ -102,6 +161,12 @@ public class Simulation {
 		this.stationMap.put(stationId, st);
 	}
 	
+	/**
+	 * Pour prendre un vélo dans un slot donné d'une station
+	 * @param stationId
+	 * @param slotId
+	 * @return : le vélo
+	 */
 	private Bike takeBikeStation(int stationId, int slotId) {
 		Station st = this.stationMap.get(stationId);
 		this.stationMap.remove(stationId);
@@ -115,12 +180,21 @@ public class Simulation {
 		return b;
 	}
 	
+	/**
+	 * Ajoute un user à la simulation
+	 * @param user
+	 * @return
+	 */
 	public int addUser(User user) {
 		this.userMap.put(user.getId(),user);
 		return user.getId();
 	}
 	
-	//Methodes pour setter/modifier un user
+	/**
+	 * Change le nom d'un user
+	 * @param userId
+	 * @param name
+	 */
 	
 	public void setUserName(int userId, String name) {
 		User us = this.userMap.get(userId);
@@ -129,6 +203,11 @@ public class Simulation {
 		this.userMap.put(userId,us);
 	}
 	
+	/**
+	 * Change la position d'un user
+	 * @param userId
+	 * @param location
+	 */
 	public void setUserLocation(int userId, Coordinate location) {
 		User us = this.userMap.get(userId);
 		this.userMap.remove(userId);
@@ -136,6 +215,11 @@ public class Simulation {
 		this.userMap.put(userId,us);
 	}
 	
+	/**
+	 * Change la carte de fidélité d'un user
+	 * @param userId
+	 * @param card
+	 */
 	public void setUserCard(int userId, Card card) {
 		User us = this.userMap.get(userId);
 		this.userMap.remove(userId);
@@ -143,6 +227,12 @@ public class Simulation {
 		this.userMap.put(userId,us);
 	}
 	
+	/**
+	 * Permet de prendre un vélo
+	 * @param userId : ID de l'user
+	 * @param bike
+	 * @param time : heure de prise du vélo
+	 */
 	private void takeBikeUser(int userId, Bike bike, int time) {
 		User us = this.userMap.get(userId);
 		this.userMap.remove(userId);
@@ -162,7 +252,12 @@ public class Simulation {
 	}
 	 */
 	
-	//Prendre et remettre un vélo dans un emplacement précis d'une station précise
+	/**
+	 * Remettre un vélo dans une station
+	 * @param stationId
+	 * @param slotId
+	 * @param bike
+	 */
 	private void returnBikeStation(int stationId, int slotId, Bike bike) {
 		Station st = this.stationMap.get(stationId);
 		this.stationMap.remove(stationId);
@@ -174,6 +269,11 @@ public class Simulation {
 		this.stationMap.put(stationId, st);
 	}
 
+	/**
+	 * Prend le vélo d'un user
+	 * @param userId
+	 * @return
+	 */
 	private Bike returnBikeUser(int userId) {
 		User us = this.userMap.get(userId);
 		this.userMap.remove(userId);
@@ -187,6 +287,13 @@ public class Simulation {
 		return b;
 	}
 	
+	/**
+	 * Donne un vélo à un user
+	 * @param userId
+	 * @param stationId
+	 * @param bikeType
+	 * @param time : heure de prise du vélo
+	 */
 	public void takeBike(int userId, int stationId, String bikeType, int time) {
 		int slotId = this.stationMap.get(stationId).findBike(bikeType);
 		Bike b = takeBikeStation(stationId, slotId);
@@ -196,6 +303,12 @@ public class Simulation {
 		}
 	}
 	
+	/**
+	 * Un user rend un vélo à une heure donnée dans une station donnée
+	 * @param userId
+	 * @param stationId
+	 * @param time
+	 */
 	public void returnBike(int userId, int stationId, int time) {
 		int slotId=this.stationMap.get(stationId).findEmptySlot();
 		Bike b = returnBikeUser(userId);
@@ -221,14 +334,22 @@ public class Simulation {
 		}
 	}
 	
-	
+	/**
+	 * Alerte les futurs donneurs de vélo
+	 * @param stationId
+	 * @param message
+	 */
 	private void alertIncomingBikeGiver(int stationId, String message) {
 		String str = "Message envoyé aux utilisateurs suivants : ";
 		str += this.stationMap.get(stationId).getIncomingBikeGiver().toString();
 		str += "\n"+message;
 		System.out.println(str);
 	}
-	
+	/**
+	 * Alerte les futurs preneurs de vélo
+	 * @param stationId
+	 * @param message
+	 */
 	private void alertIncomingBikeTaker(int stationId, String message) {
 		String str = "Message envoyé aux utilisateurs suivants : ";
 		str += this.stationMap.get(stationId).getIncomingBikeTaker().toString();
@@ -236,7 +357,11 @@ public class Simulation {
 		System.out.println(str);
 	}
 
-	//Métode qui permet de démarrer un ride pour un user
+	/**
+	 * Début d'un voyage pour un utilisateur : on l'indique à la station d'arrivée
+	 * @param userId
+	 * @param ride
+	 */
 	public void startRide(int userId, Ride ride) {
 		User user = this.userMap.get(userId);
 		user.setCurrentRide(ride);

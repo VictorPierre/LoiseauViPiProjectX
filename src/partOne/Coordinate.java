@@ -9,7 +9,11 @@ public class Coordinate {
 	private float yCoord;
 	
 	
-	
+	/**
+	 * Constructeur de coordonnées
+	 * @param xCoord : abscisse
+	 * @param yCoord : ordonnée
+	 */
 	Coordinate(float xCoord, float yCoord){
 		this.xCoord = xCoord;
 		this.yCoord = yCoord;
@@ -28,7 +32,11 @@ public class Coordinate {
 		return yCoord;
 	}
 	
-	
+	/**
+	 * Calcule la distance entre le point courant et le point c
+	 * @param c
+	 * @return
+	 */
 	public double dist(Coordinate c) {
 		return Math.pow(Math.pow(this.getxCoord()-c.getxCoord(), 2)+Math.pow(this.getyCoord()-c.getyCoord(), 2),0.5);
 	}

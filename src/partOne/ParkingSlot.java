@@ -4,6 +4,11 @@ import Exceptions.EmptySlotException;
 import Exceptions.FullSlotException;
 import Exceptions.OutOfOrderException;
 
+/**
+ * Un parkingSlot est défini par un Id, peut contenir ou non un vélo, et peut être hors service
+ *
+ */
+
 public class ParkingSlot {
 	
 	
@@ -37,7 +42,10 @@ public class ParkingSlot {
 		counter ++;
 	}
 
-	//Setters
+	/**
+	 * Setter pour mettre un ParkingSlot hors ou en service
+	 * @param isOutOfOrder
+	 */
 	public void setOutOfOrder(boolean isOutOfOrder) {
 		this.isOutOfOrder = isOutOfOrder;
 	}
@@ -65,7 +73,12 @@ public class ParkingSlot {
 		return str;
 	}
 	
-	//Methods to return and take a bike from the slot
+	/**
+	 * Permet de déposer un vélo dans un parkingSlot
+	 * @param bike : le vélo à déposer
+	 * @throws FullSlotException : le slot est déjà occupé
+	 * @throws OutOfOrderException : le slot est H-S
+	 */
 	
 	public void returnBike(Bike bike) throws FullSlotException, OutOfOrderException{
 		if (this.isOutOfOrder) {
@@ -75,6 +88,13 @@ public class ParkingSlot {
 		else {
 			this.bike=bike;}
 	}	
+	
+	/**
+	 * Permet de prendre le vélo d'un slot
+	 * @return
+	 * @throws EmptySlotException : le slot est vide
+	 * @throws OutOfOrderException : le slot est H-S
+	 */
 	public Bike takeBike() throws EmptySlotException, OutOfOrderException{
 		if (this.isOutOfOrder) {
 			throw new OutOfOrderException(this.id);}

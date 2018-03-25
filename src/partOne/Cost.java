@@ -9,7 +9,11 @@ public class Cost {
 	private int timeCredit;
 	
 	
-	//Plusieurs constructeurs pour s'adapter au changements en fonction du couple (utilisateur/vélo)
+	/**
+	 * Construction des coûts horaire en fonction du type de vélo et du type d'utilisateur (card)
+	 * @param card
+	 * @param bike
+	 */
 	public Cost(Card card, Bike bike) {
 		timeCredit = 0;
 		if (card == null) { //Couts pour un utilisateur normal (sans carte)
@@ -55,6 +59,11 @@ public class Cost {
 		this.timeCredit=this.timeCredit+ n;
 	}
 	
+	/**
+	 * Calcul du cout d'un itinéraire, en fonction du temps de trajet
+	 * @param rideDuration
+	 * @return
+	 */
 	public int getRideCost(int rideDuration) {
 		int chargedTime = rideDuration - timeCredit;
 		int rideCost = 0;

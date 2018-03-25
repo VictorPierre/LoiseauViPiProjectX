@@ -7,6 +7,13 @@ import Exceptions.OfflineException;
 import stationType.PlusType;
 import stationType.StandardType;
 import stationType.StationType;
+
+/**Classe permettant le calcul d'itinéraires optimaux
+ * 
+ *
+ */
+
+
 public class RideFactory {
 	
 	//Paramètres d'entrée
@@ -31,10 +38,10 @@ public class RideFactory {
 	
 	/**
 	 * Initialization of a RideFactory
-	 * @param stationMap
-	 * @param bikeType
-	 * @param startingLocation
-	 * @param destinationLocation
+	 * @param stationMap : réseau de stations
+	 * @param bikeType : "Electric" ou "Mechanic"
+	 * @param startingLocation : coordonnées de départ
+	 * @param destinationLocation : cordonnées d'arrivée
 	 */
 	
 	RideFactory(TreeMap<Integer, Station> stationMap, String bikeType,  Coordinate startingLocation, Coordinate destinationLocation) {
@@ -58,6 +65,18 @@ public class RideFactory {
 			this.uniformitySaver=false;		
 	}
 	
+	/**
+	 * Initialization of a RideFactory
+	 * @param stationMap : réseau de stations
+	 * @param bikeType : "Electric" ou "Mechanic"
+	 * @param startingLocation : coordonnées de départ
+	 * @param destinationLocation : cordonnées d'arrivée
+	 * @param rideType : "shortest" ou "fastest"
+	 * @param preferPlus : true pour favoriser les arrivées dans les stations Plus
+	 * @param avoidPlus : true pour éviter les stations Plus
+	 * @param uniformitySaver : true pour un calcul visant à préserver l'uniformité de la répartition des vélos
+	 */
+	
 	RideFactory(TreeMap<Integer, Station> stationMap, String bikeType,  Coordinate startingLocation, Coordinate destinationLocation,String rideType, boolean preferPlus, boolean avoidPlus, boolean uniformitySaver) {
 		this.stationMap=stationMap;
 		this.bikeType=bikeType;
@@ -79,12 +98,18 @@ public class RideFactory {
 		this.uniformitySaver=uniformitySaver;		
 	}
 	
+	/**
+	 * Méthode qui compare un itinéraire à l'itinéraire actuel et garde le meilleur
+	 * @param sst : station de départ
+	 * @param wst : station d'arrivée
+	 */
+	
 	private void updateRoute(Station sst, Station wst) {
 		 if (wst != sst) {
 			double newDist = this.startingLocation.dist(sst.getLocation())+wst.getLocation().dist(sst.getLocation())+this.destinationLocation.dist(wst.getLocation());
 			double newTime = this.startingLocation.dist(sst.getLocation())/4+wst.getLocation().dist(sst.getLocation())/this.bike.getSpeed()+this.destinationLocation.dist(wst.getLocation())/4;
 			switch (this.rideType) {
-				case ("Shortest"):
+				case ("shortest"):
 					if (this.totalDist >= newDist) {
 						this.totalDist = newDist;
 						this.totalTime = newTime;
@@ -104,7 +129,10 @@ public class RideFactory {
 		}
 	}
 	
-	
+	/**
+	 * Méthode qui calcule l'itinéraire optimal selon les paramètres de la RideFactory
+	 * @return
+	 */
 	public Ride createRide() {
 		
 		//Parcours de toutes les stations de départ possibles
