@@ -11,4 +11,9 @@ public class MechanicBike extends Bike{
 	public String toString() {
 		return "Vélo méchanique n° "+this.id;
 	}	
+	
+	public String getType() {
+		return "Mechanic";
+	}
+
 }
