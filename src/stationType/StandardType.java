@@ -1,7 +1,9 @@
 package stationType;
 
 public class StandardType implements StationType{
-	public int stationType() {
+	
+
+	public int getMinuteBonus() {
 		return 0;
 	}
 }

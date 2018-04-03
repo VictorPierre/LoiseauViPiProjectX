@@ -1,7 +1,9 @@
 package stationType;
 
 public class PlusType implements StationType{
-	public int stationType() {
+	
+	
+	public int getMinuteBonus() {
 		return 5;
 	}
 }

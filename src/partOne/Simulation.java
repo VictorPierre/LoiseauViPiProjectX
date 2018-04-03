@@ -316,11 +316,11 @@ public class Simulation {
 		User us = userMap.get(userId);
 		
 		//Crédit bonus pour les PlusType
-		if (this.stationMap.get(stationId).getStationType() instanceof PlusType && us.getCard()!=null) {
+		if (us.getCard()!=null) {
 			this.userMap.remove(userId);
-			Cost costuser=us.getCurrentCost();
-			costuser.addTimeCredit(5);
-			us.setCost(costuser);
+			Cost newCost = us.getCurrentCost();
+			newCost.addTimeCredit(this.stationMap.get(stationId).getStationType().getMinuteBonus());
+			us.setCost(newCost);
 			this.userMap.put(userId,us);
 		}
 
@@ -340,10 +340,12 @@ public class Simulation {
 	 * @param message
 	 */
 	private void alertIncomingBikeGiver(int stationId, String message) {
-		String str = "Message envoyé aux utilisateurs suivants : ";
-		str += this.stationMap.get(stationId).getIncomingBikeGiver().toString();
-		str += "\n"+message;
-		System.out.println(str);
+		if (this.stationMap.get(stationId).getIncomingBikeGiver().size()!=0) {
+			String str = "Message envoyé aux utilisateurs suivants : ";
+			str += this.stationMap.get(stationId).getIncomingBikeGiver().toString();
+			str += "\n"+message;
+			System.out.println(str);
+		}
 	}
 	/**
 	 * Alerte les futurs preneurs de vélo
@@ -351,10 +353,12 @@ public class Simulation {
 	 * @param message
 	 */
 	private void alertIncomingBikeTaker(int stationId, String message) {
-		String str = "Message envoyé aux utilisateurs suivants : ";
-		str += this.stationMap.get(stationId).getIncomingBikeTaker().toString();
-		str += "\n"+message;
-		System.out.println(str);
+		if (this.stationMap.get(stationId).getIncomingBikeTaker().size()!=0) {
+			String str = "Message envoyé aux utilisateurs suivants : ";
+			str += this.stationMap.get(stationId).getIncomingBikeTaker().toString();
+			str += "\n"+message;
+			System.out.println(str);
+		}	
 	}
 
 	/**
@@ -372,6 +376,8 @@ public class Simulation {
 		this.addIncomingBikeGiver(destinationStationId, userId);
 	}
 	
+	//Methodes de statistiques:
+	
 	
 	
 	public static void main(String[] args) {
@@ -381,31 +387,38 @@ public class Simulation {
 		int idChatelet = sm.addStation("Chatelet", new StandardType(), new Coordinate(10,0));
 		int idLuxembourg = sm.addStation("Luxembourg", new PlusType(), new Coordinate(90,90));
 		int idPortRoyal = sm.addStation("PortRoyal", new PlusType(), new Coordinate(50,50));
-		sm.addStationFleet(idChatelet, 10, "Electric");
-		sm.addStationFleet(idChatelet, 10, "Mechanic");
-		sm.addStationFleet(idChatelet, 10, "Vide");
-		sm.addStationFleet(idLuxembourg, 10, "Electric");
-		sm.addStationFleet(idLuxembourg, 10, "Mechanic");
-		sm.addStationFleet(idLuxembourg, 10, "Vide");
+		sm.addStationFleet(idChatelet, 30, "Electric");
+		sm.addStationFleet(idChatelet, 40, "Mechanic");
+		sm.addStationFleet(idChatelet, 30, "Vide");
+		sm.addStationFleet(idLuxembourg, 30, "Electric");
+		sm.addStationFleet(idLuxembourg, 40, "Mechanic");
+		sm.addStationFleet(idLuxembourg, 30, "Vide");
+		sm.addStationFleet(idPortRoyal, 30, "Electric");
+		sm.addStationFleet(idPortRoyal, 40, "Mechanic");
+		sm.addStationFleet(idPortRoyal, 30, "Vide");
 		
-		System.out.println(sm.stationMap.get(idLuxembourg).toString());
+		System.out.println("****************Etat de la station Luxembourg****************");
+		System.out.println(sm.stationMap.get(idLuxembourg).toString()+"\n");
 		
 		//Rental of a bike
 		int idPaul = sm.addUser(new User("Paul"));
 		int idLucas = sm.addUser(new User ("Lucas"));
 		sm.setUserCard(idPaul, new VlibreCard());
 		sm.takeBike(idPaul,idChatelet,"Electric",0);
+		System.out.println("****************Vélo emprunté, cout du trajet et crédit restant****************");
 		System.out.println(sm.userMap.get(idPaul).getCurrentBike());
 		sm.returnBike(idPaul,idLuxembourg,100);
-		System.out.println(sm.userMap.get(idPaul).getCurrentCost().getTimeCredit());
+		System.out.println("Credit de temps restant : "+ sm.userMap.get(idPaul).getCurrentCost().getTimeCredit()+"\n");
 		
 		Coordinate startingLocation = new Coordinate(0,0);
 		Coordinate destinationLocation = new Coordinate(100,100);
 		RideFactory rideFactory = new RideFactory(sm.stationMap, "Mechanic", startingLocation, destinationLocation);
 		Ride ride = rideFactory.createRide();
+		System.out.println("****************Ride calculé pour l'utilisateur****************");
 		System.out.println(ride);
 		
 		//Simulation of planning a ride
+		System.out.println("****************Essai de fermeture d'une station****************");
 		sm.startRide(idLucas, ride);
 		sm.takeBike(idLucas, ride.getStartingStationId(), ride.getBikeType() , 0);
 		sm.setStationOnline(ride.getDestinationStationId(), false);
