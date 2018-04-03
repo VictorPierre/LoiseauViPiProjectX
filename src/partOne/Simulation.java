@@ -396,39 +396,31 @@ public class Simulation {
 		sm.addStationFleet(idPortRoyal, 30, "Electric");
 		sm.addStationFleet(idPortRoyal, 40, "Mechanic");
 		sm.addStationFleet(idPortRoyal, 30, "Vide");
-		System.out.println("*************Etat de la station Luxembourg*************");
-		System.out.println(sm.stationMap.get(idLuxembourg).toString());
-		System.out.println("\n");
 		
+		System.out.println("****************Etat de la station Luxembourg****************");
+		System.out.println(sm.stationMap.get(idLuxembourg).toString()+"\n");
 		
 		//Rental of a bike
 		int idPaul = sm.addUser(new User("Paul"));
 		int idLucas = sm.addUser(new User ("Lucas"));
 		sm.setUserCard(idPaul, new VlibreCard());
 		sm.takeBike(idPaul,idChatelet,"Electric",0);
-		System.out.println("*************Velo et crédit après la location d'un vélo*************");
-		System.out.println(sm.userMap.get(idPaul).getCurrentBike().toString());
+		System.out.println("****************Vélo emprunté, cout du trajet et crédit restant****************");
+		System.out.println(sm.userMap.get(idPaul).getCurrentBike());
 		sm.returnBike(idPaul,idLuxembourg,100);
-		System.out.println("Crédit : "+sm.userMap.get(idPaul).getCurrentCost().getTimeCredit());
+		System.out.println("Credit de temps restant : "+ sm.userMap.get(idPaul).getCurrentCost().getTimeCredit()+"\n");
 		
-		
-		//Simulation of planning a ride
-		String bikeType="Mechanic";
 		Coordinate startingLocation = new Coordinate(0,0);
 		Coordinate destinationLocation = new Coordinate(100,100);
-		RideFactory rideFactory = new RideFactory(sm.stationMap, bikeType, startingLocation, destinationLocation);
-
-		
+		RideFactory rideFactory = new RideFactory(sm.stationMap, "Mechanic", startingLocation, destinationLocation);
 		Ride ride = rideFactory.createRide();
-		Ride ride1 = rideFactory.createFastestRide(sm.stationMap, bikeType, startingLocation, destinationLocation);
-		Ride ride2 = rideFactory.createShortestRide(sm.stationMap, bikeType, startingLocation, destinationLocation);
-		System.out.println("*************Description du ride*************");
-		System.out.println(ride1);
+		System.out.println("****************Ride calculé pour l'utilisateur****************");
+		System.out.println(ride);
 		
-		
-		sm.startRide(idLucas, ride2);
-		sm.takeBike(idLucas, ride2.getStartingStationId(), ride2.getBikeType() , 0);
-		System.out.println("*************Essai de désactivation de la station de destination*************");
-		sm.setStationOnline(ride2.getDestinationStationId(), false);
+		//Simulation of planning a ride
+		System.out.println("****************Essai de fermeture d'une station****************");
+		sm.startRide(idLucas, ride);
+		sm.takeBike(idLucas, ride.getStartingStationId(), ride.getBikeType() , 0);
+		sm.setStationOnline(ride.getDestinationStationId(), false);
 	}
 }
