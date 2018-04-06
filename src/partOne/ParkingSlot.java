@@ -28,14 +28,14 @@ public class ParkingSlot {
 	
 	//Constructors
 		//Default one
-	ParkingSlot(){
+	public ParkingSlot(){
 		this.id = counter;
 		this.isOutOfOrder = false;
 		this.bike = null;
 		counter ++;
 	}
 		//Constructor for a given bike
-	ParkingSlot(Bike bike){
+	public ParkingSlot(Bike bike){
 		this.id = counter;
 		this.isOutOfOrder = false;
 		this.bike = bike;
@@ -104,24 +104,6 @@ public class ParkingSlot {
 			Bike bikeTaken = this.bike;
 			this.bike = null;
 			return bikeTaken;	
-		}
-	}
-	
-	
-	public static void main(String[] args) {
-		ParkingSlot p = new ParkingSlot(new ElectricBike());
-		System.out.println(p.toString());
-		ParkingSlot o = new ParkingSlot(null);
-		System.out.println(o.toString());
-		ParkingSlot m = new ParkingSlot(new MechanicBike());
-		m.setOutOfOrder(true);
-		System.out.println(m.toString());
-		try {
-			p.returnBike(new ElectricBike());
-		} catch (FullSlotException e) {
-			e.printStackTrace();
-		} catch (OutOfOrderException e) {
-			e.printStackTrace();
 		}
 	}
 }

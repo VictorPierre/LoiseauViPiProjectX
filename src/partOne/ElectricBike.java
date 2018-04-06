@@ -3,7 +3,7 @@ package partOne;
 public class ElectricBike extends Bike{
 		
 	//Constructor
-	ElectricBike(){
+	public ElectricBike(){
 		super();
 	}
 	

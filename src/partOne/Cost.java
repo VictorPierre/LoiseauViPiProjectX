@@ -1,5 +1,7 @@
 package partOne;
 
+import Exceptions.NoCardException;
+
 public class Cost {
 
 	//Stocke les couts selon la séparation du temps
@@ -8,6 +10,8 @@ public class Cost {
 	//Stocke le temps bonus
 	private int timeCredit;
 	
+	public Card card;
+	
 	
 	/**
 	 * Construction des coûts horaire en fonction du type de vélo et du type d'utilisateur (card)
@@ -15,6 +19,7 @@ public class Cost {
 	 * @param bike
 	 */
 	public Cost(Card card, Bike bike) {
+		this.card=card;
 		timeCredit = 0;
 		if (card == null) { //Couts pour un utilisateur normal (sans carte)
 			if (bike ==null) {
@@ -51,12 +56,18 @@ public class Cost {
 	public int[] getCosts() {
 		return costs;
 	}
-	public int getTimeCredit() {
-		return this.timeCredit;
+	public int getTimeCredit() throws NoCardException{
+		if (this.card==null) {
+			throw new NoCardException();
+		}
+		else {return this.timeCredit;}
 	}
 	
-	public void addTimeCredit(int n) {
-		this.timeCredit=this.timeCredit+ n;
+	public void addTimeCredit(int n) throws NoCardException{
+		if (this.card==null) {
+			throw new NoCardException();
+			}
+		else {this.timeCredit=this.timeCredit+ n;}
 	}
 	
 	/**
@@ -69,24 +80,18 @@ public class Cost {
 		int rideCost = 0;
 		if (chargedTime <=60) {
 			rideCost = costs[0];
-			if (rideDuration>60) {
+			if (rideDuration>60 && this.card!=null) {
 				timeCredit -= rideDuration - 60;
 			}
 		}
 		else {
 			int chargedHours = (( (((float)chargedTime)/60)==(float)(chargedTime/60) )?chargedTime / 60 :(chargedTime / 60) + 1);
-			timeCredit = chargedHours*60-chargedTime;
+			if (this.card!=null){
+				timeCredit = chargedHours*60-chargedTime;
+			}
 			rideCost = ((chargedHours ==1)?costs[0]:costs[0]+(chargedHours-1)*costs[1]);
 		}
 		return rideCost;
-	}
-	
-	public static void main(String[] args) {
-		Cost c = new Cost(new VmaxCard(), new ElectricBike());
-		System.out.println("Ride cost : " + c.getRideCost(70) + "€");
-		System.out.println("Time credit : " + c.getTimeCredit()+"\n");
-		System.out.println("Ride cost : " + c.getRideCost(170) + "€");
-		System.out.println("Time credit : " + c.getTimeCredit()+"\n");
 	}
 	
 }

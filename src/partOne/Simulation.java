@@ -5,6 +5,7 @@ import java.util.TreeMap;
 
 import Exceptions.EmptySlotException;
 import Exceptions.FullSlotException;
+import Exceptions.NoCardException;
 import Exceptions.OfflineException;
 import stationType.PlusType;
 import stationType.StandardType;
@@ -319,7 +320,12 @@ public class Simulation {
 		if (us.getCard()!=null) {
 			this.userMap.remove(userId);
 			Cost newCost = us.getCurrentCost();
-			newCost.addTimeCredit(this.stationMap.get(stationId).getStationType().getMinuteBonus());
+			try {
+				newCost.addTimeCredit(this.stationMap.get(stationId).getStationType().getMinuteBonus());
+			} 
+			catch (NoCardException e) {
+				e.printStackTrace();
+			}
 			us.setCost(newCost);
 			this.userMap.put(userId,us);
 		}
@@ -408,8 +414,12 @@ public class Simulation {
 		System.out.println("****************Vélo emprunté, cout du trajet et crédit restant****************");
 		System.out.println(sm.userMap.get(idPaul).getCurrentBike());
 		sm.returnBike(idPaul,idLuxembourg,100);
+		try {
 		System.out.println("Credit de temps restant : "+ sm.userMap.get(idPaul).getCurrentCost().getTimeCredit()+"\n");
-		
+		} 
+		catch (NoCardException e) {
+			e.printStackTrace();
+		}
 		Coordinate startingLocation = new Coordinate(0,0);
 		Coordinate destinationLocation = new Coordinate(100,100);
 		RideFactory rideFactory = new RideFactory(sm.stationMap, "Mechanic", startingLocation, destinationLocation);
