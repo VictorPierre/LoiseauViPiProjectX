@@ -30,6 +30,19 @@ public class Ride {
 	
 	private String bikeType;
 	
+	public Ride(){
+		this.destinationStationId = counter;
+		counter++;
+		this.startingStationId=0;
+		this.destinationStationId=0;
+		this.startingLocation = new Coordinate(0,0);
+		this.wantedLocation = new Coordinate(0,0);
+		this.rideType = "";
+		this.distance=0;
+		this.time=0;
+		this.bikeType="";
+	}
+	
 	public Ride(String rideType){
 		this.destinationStationId = counter;
 		counter++;

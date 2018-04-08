@@ -1,0 +1,8 @@
+/EmptySlotException.class
+/EmptyStationException.class
+/FullSlotException.class
+/FullStationException.class
+/NoCardException.class
+/OfflineException.class
+/OutOfOrderException.class
+/RideImpossibleException.class

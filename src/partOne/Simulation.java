@@ -9,6 +9,7 @@ import Exceptions.FullSlotException;
 import Exceptions.FullStationException;
 import Exceptions.NoCardException;
 import Exceptions.OfflineException;
+import Exceptions.RideImpossibleException;
 import stationType.PlusType;
 import stationType.StandardType;
 import stationType.StationType;
@@ -510,7 +511,10 @@ public class Simulation {
 		sm.setRideFactory(new Fastest());
 		
 		//Route calculation
-		Ride ride = sm.getRideFactory().createRide(sm.stationMap, "Mechanic", startingLocation, destinationLocation);
+		Ride ride=new Ride();
+		try {
+			ride = sm.getRideFactory().createRide(sm.stationMap, "Mechanic", startingLocation, destinationLocation);
+		} catch (RideImpossibleException e) {e.printStackTrace();}
 		
 		System.out.println("****************Ride calculé pour l'utilisateur****************");
 		System.out.println(ride);
