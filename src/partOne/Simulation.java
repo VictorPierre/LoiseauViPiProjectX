@@ -32,11 +32,26 @@ public class Simulation {
 	
 	private RideFactory rideFactory;
 	
+	/**
+	 * Nom de la simulation
+	 */
+	private String name;
+	
+	
 	public Simulation(){
+		this.name = "default";
 		this.stationMap = new TreeMap<Integer,Station>();
 		this.userMap = new TreeMap<Integer,User>();
 		this.rideFactory=new Fastest();
 	}
+	
+	public Simulation(String name){
+		this.name = name;
+		this.stationMap = new TreeMap<Integer,Station>();
+		this.userMap = new TreeMap<Integer,User>();
+		this.rideFactory=new Fastest();
+	}
+	
 	
 	public void setRideFactory(RideFactory rideFactory) {
 		this.rideFactory=rideFactory;

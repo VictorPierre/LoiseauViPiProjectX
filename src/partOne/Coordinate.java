@@ -24,6 +24,11 @@ public class Coordinate {
 		this.yCoord=0;
 	}
 	
+	public Coordinate(double d, double e) {
+		this.xCoord = (float) xCoord;
+		this.yCoord = (float) yCoord;
+	}
+
 	public void setxCoord(float xCoord) {
 		this.xCoord = xCoord;
 	}
