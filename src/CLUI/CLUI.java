@@ -10,18 +10,14 @@ import stationType.*;
 
 public class CLUI {
 	
-	public Simulation setup(String name, int nstations, int nslots, float side, int nbikes) {
+	public static Simulation setup(String name, int nstations, int nslots, float side, int nbikes) {
 		Simulation sm = new Simulation(name);
 		for (int k=0; k<nstations;k++) {
 			sm.addStation("station"+k+1, new StandardType(), new Coordinate(side*Math.random()- side/2,side*Math.random()-side/2));
-			sm.addStationFleet(k+1, nslots, null);
+			sm.addStationFleet(k+1, nslots-nslots/nbikes, null);
+			sm.addStationFleet(k+1, nbikes/nslots, "Mechanical");
 		}
-		int nBikeLeft = nbikes;
-		
-		while (nBike > 0) {
-			sm.add
-		}
-		
+		return sm;
 	}
 	
 	public final static void run() {
@@ -33,10 +29,20 @@ public class CLUI {
 		
 		if (values[0] == "setup" ) {
 			if (values.length == 2 ) {
-				
+				try{
+					Simulation sm = setup(values[1], 10,10,4f,7 );
+				}
+				catch (Exception e) {
+					System.out.println(values[0]+" : mauvais type d'argument");
+				}
 			}
 			else if (values.length == 6) {
-				
+				try{
+					Simulation sm = setup(values[1],Integer.parseInt(values[2]),Integer.parseInt(values[3]),Float.parseFloat(values[4]),Integer.parseInt(values[5]));
+				}
+				catch (Exception e) {
+					System.out.println(values[0]+" : mauvais type d'argument");
+				}
 			}
 			else {
 				System.out.println(values[0]+" : mauvais nombre d'arguments");
