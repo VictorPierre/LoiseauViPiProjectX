@@ -365,10 +365,9 @@ public class Simulation {
 		Bike b = returnBikeUser(userId);
 		returnBikeStation(stationId, slotId,b);
 		User us = userMap.get(userId);
-		
+		this.userMap.remove(userId);
 		//Crédit bonus pour les PlusType
 		if (us.getCard()!=null) {
-			this.userMap.remove(userId);
 			Cost newCost = us.getCurrentCost();
 			try {
 				newCost.addTimeCredit(this.stationMap.get(stationId).getStationType().getMinuteBonus());
@@ -384,16 +383,10 @@ public class Simulation {
 		Cost cost = us.getCurrentCost();
 		int rideCost = cost.getRideCost(rideDuration);
 		System.out.println("L'utilisateur sera débité de "+rideCost+"€");
+		us.addTotalCharge(rideCost);
+		us.addTotalTime(rideDuration);
 		
-		try {
-			int slot=this.stationMap.get(stationId).findEmptySlot(); 
-		}
-		catch (FullStationException e) {
-			this.alertIncomingBikeGiver(stationId,"Il n'y a plus de place dans la destination souhaitée "+this.stationMap.get(stationId).getName()+". Vous devez recalculer votre itinéraire.");
-		}
-		//if (this.stationMap.get(stationId).findEmptySlot()==-1) {
-		//	this.alertIncomingBikeGiver(stationId,"Il n'y a plus de place dans la destination souhaitée "+this.stationMap.get(stationId).getName()+". Vous devez recalculer votre itinéraire.");
-		//}
+		this.userMap.put(userId,us);
 	}
 	
 	/**
@@ -431,6 +424,7 @@ public class Simulation {
 	public void startRide(int userId, Ride ride) {
 		User user = this.userMap.get(userId);
 		user.setCurrentRide(ride);
+		user.addTotalNbRide();
 		//On indique ensuite aux stations que l'utilisateur est en train d'arriver
 		int startingStationId = ride.getStartingStationId();
 		int destinationStationId = ride.getDestinationStationId();
@@ -440,6 +434,24 @@ public class Simulation {
 	
 	//Methodes de statistiques:
 	
+	public void getUserBalance(int userId) {
+		String str = "";
+		User us = this.userMap.get(userId);
+		str+="Utilisateur :"+us.getName()+" n° "+userId+"\n";
+		str+="Nombre total de trajets : "+us.getTotalNbRide()+"\n";
+		str+="Somme totale dépensée : "+us.getTotalCharge()+"\n";
+		str+="Temps total passé en vélo : "+us.getTotalTime();
+		System.out.println(str);
+	}
+	
+	public void getStationBalance(int stationId) {
+		String str = "";
+		Station st = this.stationMap.get(stationId);
+		str += "Station : "+st.getName()+" n° "+stationId+"\n";
+		str+="Nombre total de location : "+st.getTotalRentNb()+"\n";
+		str+="Nombre total de retour : "+st.getTotalReturnNb()+"\n";
+		System.out.println(str);
+	}
 	
 	
 	public static void main(String[] args) {

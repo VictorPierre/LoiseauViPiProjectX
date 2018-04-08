@@ -17,7 +17,7 @@ public class User {
 	//Number which will be used to create the ID
 	private static int counter;
 	
-	//The bike th user uses. Null if the user doesn't have a bike at the moment
+	//The bike the user uses. Null if the user doesn't have a bike at the moment
 	private Bike currentBike;
 	
 	//Cost of the ongoing ride
@@ -32,6 +32,15 @@ public class User {
 	//Time when the user takes the bike
 	private int time;
 
+	//Total time spend on a bike
+	private int totalTime;
+	
+	//Total number of rides
+	private int totalNbRide;
+	
+	//Total charges
+	private int totalCharge;
+	
 	
 	public User() {
 		this.name = "Default";
@@ -40,6 +49,9 @@ public class User {
 		counter++;
 		this.currentBike = null;
 		this.card = null;
+		this.totalTime=0;
+		this.totalNbRide=0;
+		this.totalCharge=0;
 		updateCost();
 	}
 	
@@ -50,6 +62,9 @@ public class User {
 		counter++;
 		this.currentBike = null;
 		this.card = null;
+		this.totalTime=0;
+		this.totalNbRide=0;
+		this.totalCharge=0;
 		updateCost();
 	}
 	
@@ -60,6 +75,9 @@ public class User {
 		counter++;
 		this.currentBike = bike;
 		this.card = card;
+		this.totalTime=0;
+		this.totalNbRide=0;
+		this.totalCharge=0;
 		updateCost();
 	}
 	
@@ -109,6 +127,17 @@ public class User {
 	public void setCost(Cost cost) {
 		this.currentCost=cost;
 	}
+	public int getTotalTime() {
+		return totalTime;
+	}
+
+	public int getTotalNbRide() {
+		return totalNbRide;
+	}
+
+	public int getTotalCharge() {
+		return totalCharge;
+	}
 	
 	//Update le cout du ride en cours, change quand le vélo change ou le type de carte change
 	public void updateCost() {
@@ -135,6 +164,18 @@ public class User {
 			currentBike = null;
 			return b;
 		}
+	}
+
+	public void addTotalTime(int time) {
+		this.totalTime += time;
+	}
+
+	public void addTotalNbRide() {
+		this.totalNbRide ++;
+	}
+
+	public void addTotalCharge(int charge) {
+		this.totalCharge += charge;
 	}
 
 	
