@@ -30,7 +30,7 @@ public class Ride {
 	
 	private String bikeType;
 	
-	Ride(String rideType){
+	public Ride(String rideType){
 		this.destinationStationId = counter;
 		counter++;
 		this.startingStationId=0;
@@ -43,7 +43,7 @@ public class Ride {
 		this.bikeType="";
 	}
 	
-	Ride(Station startingStation, Station wantedStation, Coordinate startingLocation, Coordinate wantedLocation, String rideType, String bikeType, double distance, double time){
+	public Ride(Station startingStation, Station wantedStation, Coordinate startingLocation, Coordinate wantedLocation, String rideType, String bikeType, double distance, double time){
 		this.destinationStationId = counter;
 		counter++;
 		this.startingStationId=startingStation.getId();

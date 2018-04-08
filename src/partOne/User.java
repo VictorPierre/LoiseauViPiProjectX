@@ -53,6 +53,16 @@ public class User {
 		updateCost();
 	}
 	
+	public User(String name, Coordinate coordinate, Bike bike, Card card) {
+		this.name = name;
+		this.location = coordinate;
+		this.id = counter;
+		counter++;
+		this.currentBike = bike;
+		this.card = card;
+		updateCost();
+	}
+	
 	
 	//Setters
 	public void setName(String name) {

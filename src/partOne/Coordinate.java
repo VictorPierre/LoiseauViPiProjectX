@@ -19,6 +19,11 @@ public class Coordinate {
 		this.yCoord = yCoord;
 	}
 	
+	public Coordinate() {
+		this.xCoord=0;
+		this.yCoord=0;
+	}
+	
 	public void setxCoord(float xCoord) {
 		this.xCoord = xCoord;
 	}
@@ -43,6 +48,12 @@ public class Coordinate {
 	
 	public String toString() {
 		return "["+xCoord+","+yCoord+"]";
+	}
+	
+	@Override
+	public boolean equals(Object o) {
+		Coordinate c=(Coordinate) o;
+		return (this.xCoord==c.xCoord && this.yCoord==c.yCoord);
 	}
 
 }

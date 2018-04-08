@@ -4,12 +4,15 @@ import java.util.Arrays;
 import java.util.TreeMap;
 
 import Exceptions.EmptySlotException;
+import Exceptions.EmptyStationException;
 import Exceptions.FullSlotException;
+import Exceptions.FullStationException;
 import Exceptions.NoCardException;
 import Exceptions.OfflineException;
 import stationType.PlusType;
 import stationType.StandardType;
 import stationType.StationType;
+import rideFactory.*;
 
 public class Simulation {
 	
@@ -23,10 +26,34 @@ public class Simulation {
 	 */
 	private TreeMap<Integer, User> userMap;
 	
-	Simulation(){
+	/**
+	 * La RideFactory pour générer des itinéraires
+	 */
+	
+	private RideFactory rideFactory;
+	
+	public Simulation(){
 		this.stationMap = new TreeMap<Integer,Station>();
 		this.userMap = new TreeMap<Integer,User>();
+		this.rideFactory=new Fastest();
 	}
+	
+	public void setRideFactory(RideFactory rideFactory) {
+		this.rideFactory=rideFactory;
+	}
+	
+	public RideFactory getRideFactory() {
+		return this.rideFactory;
+	}
+	
+	public TreeMap<Integer, Station> getStationMap(){
+		return this.stationMap;
+	}
+	
+	public TreeMap<Integer, User> getUserMap(){
+		return this.userMap;
+	}
+
 	
 	/**
 	 * Pour ajouter une station au réseau
@@ -58,7 +85,7 @@ public class Simulation {
 	 * @param location : l'emplacement de la station
 	 * @return l'ID unique de la station créée
 	 */
-	private int addStation(String name, StationType stationType, Coordinate location) {
+	public int addStation(String name, StationType stationType, Coordinate location) {
 		Station st = new Station(name,stationType,location);
 		int id = st.getId();
 		this.stationMap.put(id,st);
@@ -129,10 +156,23 @@ public class Simulation {
 		this.stationMap.remove(stationId);
 		st.setOutOfOrder(slotId, isOutOfOrder);
 		this.stationMap.put(stationId, st);
+		/**
 		if (this.stationMap.get(stationId).findBike("Electric")==-1 && this.stationMap.get(stationId).findBike("Mechanic")==-1) {
 			this.alertIncomingBikeGiver(stationId,"Il n'y a plus de vélos disponibles dans la station "+this.stationMap.get(stationId).getName()+". Vous devez recalculer votre itinéraire.");
 		}
 		if (this.stationMap.get(stationId).findEmptySlot()==-1) {
+			this.alertIncomingBikeGiver(stationId,"Il n'y a plus de place dans la destination souhaitée "+this.stationMap.get(stationId).getName()+". Vous devez recalculer votre itinéraire.");
+		}
+		**/
+		try {
+			int slotE=this.stationMap.get(stationId).findBike("Electric"); 
+			int slotM=this.stationMap.get(stationId).findBike("Mechanic");
+			int slotV=this.stationMap.get(stationId).findEmptySlot();
+		}
+		catch (EmptyStationException e) {
+			this.alertIncomingBikeTaker(stationId,"Il n'y a plus de vélos disponibles dans la station "+this.stationMap.get(stationId).getName()+". Vous devez recalculer votre itinéraire.");
+		}
+		catch (FullStationException e) {
 			this.alertIncomingBikeGiver(stationId,"Il n'y a plus de place dans la destination souhaitée "+this.stationMap.get(stationId).getName()+". Vous devez recalculer votre itinéraire.");
 		}
 		
@@ -296,12 +336,21 @@ public class Simulation {
 	 * @param time : heure de prise du vélo
 	 */
 	public void takeBike(int userId, int stationId, String bikeType, int time) {
-		int slotId = this.stationMap.get(stationId).findBike(bikeType);
+		int slotId=0;
+		try {slotId=this.stationMap.get(stationId).findBike(bikeType);} catch (EmptyStationException e) {e.printStackTrace();}
 		Bike b = takeBikeStation(stationId, slotId);
 		takeBikeUser(userId,b,time);
-		if (this.stationMap.get(stationId).findBike("Electric")==-1 && this.stationMap.get(stationId).findBike("Mechanic")==-1) {
+		//if (this.stationMap.get(stationId).findBike("Electric")==-1 && this.stationMap.get(stationId).findBike("Mechanic")==-1) {
+			//this.alertIncomingBikeTaker(stationId,"Il n'y a plus de vélos disponibles dans la station "+this.stationMap.get(stationId).getName()+". Vous devez recalculer votre itinéraire.");
+		//}
+		try {
+			int slotE=this.stationMap.get(stationId).findBike("Electric"); 
+			int slotM=this.stationMap.get(stationId).findBike("Mechanic");
+		}
+		catch (EmptyStationException e) {
 			this.alertIncomingBikeTaker(stationId,"Il n'y a plus de vélos disponibles dans la station "+this.stationMap.get(stationId).getName()+". Vous devez recalculer votre itinéraire.");
 		}
+		
 	}
 	
 	/**
@@ -311,7 +360,8 @@ public class Simulation {
 	 * @param time
 	 */
 	public void returnBike(int userId, int stationId, int time) {
-		int slotId=this.stationMap.get(stationId).findEmptySlot();
+		int slotId=0;
+		try {slotId=this.stationMap.get(stationId).findEmptySlot();} catch (FullStationException e) {e.printStackTrace();}
 		Bike b = returnBikeUser(userId);
 		returnBikeStation(stationId, slotId,b);
 		User us = userMap.get(userId);
@@ -335,9 +385,15 @@ public class Simulation {
 		int rideCost = cost.getRideCost(rideDuration);
 		System.out.println("L'utilisateur sera débité de "+rideCost+"€");
 		
-		if (this.stationMap.get(stationId).findEmptySlot()==-1) {
+		try {
+			int slot=this.stationMap.get(stationId).findEmptySlot(); 
+		}
+		catch (FullStationException e) {
 			this.alertIncomingBikeGiver(stationId,"Il n'y a plus de place dans la destination souhaitée "+this.stationMap.get(stationId).getName()+". Vous devez recalculer votre itinéraire.");
 		}
+		//if (this.stationMap.get(stationId).findEmptySlot()==-1) {
+		//	this.alertIncomingBikeGiver(stationId,"Il n'y a plus de place dans la destination souhaitée "+this.stationMap.get(stationId).getName()+". Vous devez recalculer votre itinéraire.");
+		//}
 	}
 	
 	/**
@@ -422,8 +478,13 @@ public class Simulation {
 		}
 		Coordinate startingLocation = new Coordinate(0,0);
 		Coordinate destinationLocation = new Coordinate(100,100);
-		RideFactory rideFactory = new RideFactory(sm.stationMap, "Mechanic", startingLocation, destinationLocation);
-		Ride ride = rideFactory.createRide();
+		
+		//Ride planning policy
+		sm.setRideFactory(new Fastest());
+		
+		//Route calculation
+		Ride ride = sm.getRideFactory().createRide(sm.stationMap, "Mechanic", startingLocation, destinationLocation);
+		
 		System.out.println("****************Ride calculé pour l'utilisateur****************");
 		System.out.println(ride);
 		

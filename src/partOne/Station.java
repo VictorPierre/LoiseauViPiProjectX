@@ -9,6 +9,8 @@ import Exceptions.EmptySlotException;
 import Exceptions.FullSlotException;
 import Exceptions.OfflineException;
 import Exceptions.OutOfOrderException;
+import Exceptions.FullStationException;
+import Exceptions.EmptyStationException;
 import stationType.*;
 
 
@@ -286,7 +288,7 @@ public class Station {
 	}
 	
 	
-	//For the initialisation of the sation
+	//For the initialisation of the station
 	/**
 	 * Add n filled parking slots with the same type of bikes
 	 * @param n
@@ -316,7 +318,7 @@ public class Station {
 	}
 
 	//Renvoie l'id de la première place vide et en service. Renvoie -1 s'il n'y en a pas.
-	public int findEmptySlot() {
+	public int findEmptySlot() throws FullStationException{
 		for(Entry<Integer, ParkingSlot> entry : this.slotMap.entrySet()) {
 			int id = entry.getKey();
 			ParkingSlot park = entry.getValue();
@@ -324,11 +326,11 @@ public class Station {
 				return id;
 			}
 		}
-		return -1;
+		throw new FullStationException();
 	}
 	
 	//Renvoie l'id de la premiere place en service qui contient le vélo voulu
-	public int findBike(String bikeType) {
+	public int findBike(String bikeType) throws EmptyStationException{
 		for(Entry<Integer, ParkingSlot> entry : this.slotMap.entrySet()) {
 			int id = entry.getKey();
 			ParkingSlot park = entry.getValue();
@@ -339,7 +341,7 @@ public class Station {
 				return id;
 			}
 		}
-		return -1;
+		throw new EmptyStationException();
 	}
 	
 	public String toString() {
@@ -351,22 +353,16 @@ public class Station {
 		str+="\tAvailable slots : "+this.availableSlotNb+"\n\n";
 		str += this.slotMap.values().toString();
 		return str;
-		
-		
+	}
+	
+	public static void main(String[] args) {
+		Station st= new Station();
+		st.addFleet(10, "Electric");
+		st.addFleet(5, "vide");
+		st.addFleet(5, "Mechanic");
+		System.out.print(st.getSlotMap());
 		
 	}
-	/*
-	public static void main(String[] args) {
-	Station st = new Station();
-	st.addFleet(10, "Electric");
-	st.addFleet(5, "vide");
-	st.addFleet(5, "Mechanic");
-	Bike b = st.takeBike(1);
-	st.returnBike(1,b);
-	System.out.println(st);
-	*/
-
-	
 
 }
 	
