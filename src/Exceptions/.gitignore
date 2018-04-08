@@ -5,3 +5,4 @@
 /NoCardException.class
 /OfflineException.class
 /OutOfOrderException.class
+/RideImpossibleException.class
